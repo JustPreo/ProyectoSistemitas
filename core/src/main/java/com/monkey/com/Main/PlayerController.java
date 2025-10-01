@@ -4,21 +4,24 @@
  */
 package com.monkey.com.Main;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  *
  * @author user
  */
-public class PlayerController {
+public abstract class PlayerController {
     //Intentare hacer la logica basica del playercontroller general , tipo mono y jugador?
-    private Texture sprite;//Sprite por el momento
-    private float x,y;
-    private float velocidadX,velocidadY;
-    private float gravedad;//SideScroller so ocupa gravedad)?
-    private boolean tocandoPiso;//Para revisar si toca el piso o no?
+    protected Texture sprite;//Sprite por el momento
+    protected float x,y;
+    protected float velocidadX,velocidadY;
+    protected float gravedad;//SideScroller so ocupa gravedad)?
+    public boolean tocandoPiso;//Para revisar si toca el piso o no?
+    protected boolean activo;
+    protected Rectangle hitbox;//Hitbox
+
     
     public PlayerController(String texturaPath,float xI , float yI,float velocidad){
     this.sprite = new Texture(texturaPath);
@@ -26,38 +29,14 @@ public class PlayerController {
     this.y = yI;
     this.velocidadX = velocidad;
     this.velocidadY = 0;
-    this.gravedad = -600;//Aun no se , hay que ver como manejar esto
+    this.gravedad = -500;//Aun no se , hay que ver como manejar esto
     this.tocandoPiso = true;
+    activo = false;
     }
     
-    public void update(float delta,int teclaIzq , int teclaDer,int teclaSaltar){
-    //Vamos a ver los movimientos
-        if (Gdx.input.isKeyPressed(teclaDer)){
-        x += velocidadX * delta;//Como el time.deltaTime de unity
-        }
-        if (Gdx.input.isKeyPressed(teclaIzq))
-        {
-        x -= velocidadX * delta;
-        }
-        if (Gdx.input.isKeyJustPressed(teclaSaltar) && tocandoPiso)//Creo que justPressed seria mejor para que no revise doble salto o algo asi
-        {
-        velocidadY = 200;//Cambiar parametro a futuro
-        tocandoPiso = false;
-        }
-        //Agregar gravedad a la velocidad de y
-        velocidadY += gravedad * delta;
-        y += velocidadY * delta;
-        //Agregar despues lo de saber si esta en suelo o no\
-       if (y <= 100){
-       y = 100;
-       velocidadY =0;
-       tocandoPiso = true;
-       }
-    }
+    public abstract void update(float delta);
     
-    public void render(SpriteBatch batch){//Pedir el batch
-    batch.draw(sprite, x, y);
-    }
+    public abstract void render(SpriteBatch batch);
     
     public void dispose(){
     sprite.dispose();
@@ -70,4 +49,21 @@ public class PlayerController {
     public float getY() {
         return y;
     }
+    public void cambiarEstado(boolean bool){
+    activo = bool;//Lo opuesto a lo que esta ahorita
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setVelocidadY(float velocidadY) {
+        this.velocidadY = velocidadY;
+    }
+
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+    
+    
 }
