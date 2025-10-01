@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.ArrayList;
 
 /**
  *
@@ -15,44 +16,90 @@ import com.badlogic.gdx.math.Rectangle;
  */
 public class Prisionero extends PlayerController {
 
-    public Prisionero(String texturaPath, float xI, float yI, float velocidad) {
-        super(texturaPath, xI, yI, velocidad);
-        this.hitbox = new Rectangle (x,y,32,64);//Tamano sprite
+    public Prisionero(String texturaPath, float xI, float yI, float velocidad, ArrayList<Rectangle> mapaPlataformas) {
+        super(texturaPath, xI, yI, velocidad, mapaPlataformas);
+        this.hitbox = new Rectangle(x, y, 32, 64);//Tamano sprite
     }
 
-    @Override
-    public void update(float delta) {//Hoy si agregar movimiento
+    public void update(float delta) {
+        // Guardar posicion anterior
+        delta = Math.min(delta, 0.05f);//limito delta
+        float oldX = x;
+        float oldY = y;
+
+        // Movimiento horizontal
         if (activo) {
-            
-            //Vamos a ver los movimientos
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                x += velocidadX * delta;//Como el time.deltaTime de unity
+                x += velocidadX * delta;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 x -= velocidadX * delta;
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso)//Creo que justPressed seria mejor para que no revise doble salto o algo asi
-            {
-                System.out.println("Wtf prisionero");
-                velocidadY = 200;//Cambiar parametro a futuro
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso) {
+                velocidadY = 200;
                 tocandoPiso = false;
             }
             
+            
         }
-        //Agregar gravedad a la velocidad de y
+
+        // Aplicar gravedad
         velocidadY += gravedad * delta;
         y += velocidadY * delta;
-        //Agregar despues lo de saber si esta en suelo o no\
-        
-        
-        hitbox.x = x;
-        hitbox.y = y;
 
+        // Actualizar hitbox con nueva pos
+        hitbox.setPosition(x, y);
+
+        // Reset flag de piso
+        tocandoPiso = false;
+
+        // Verificar colisiones
+        for (Rectangle plataforma : mapaPlataformas) {
+            if (hitbox.overlaps(plataforma)) {
+
+                // Calcular overlap en cada dir
+                float overlapLeft = (hitbox.x + hitbox.width) - plataforma.x;
+                float overlapRight = (plataforma.x + plataforma.width) - hitbox.x;
+                float overlapTop = (hitbox.y + hitbox.height) - plataforma.y;
+                float overlapBottom = (plataforma.y + plataforma.height) - hitbox.y;
+
+                // Encontrar el overlap mínimo (indica la dir de la col)
+                float minOverlap = Math.min(
+                        Math.min(overlapLeft, overlapRight),
+                        Math.min(overlapTop, overlapBottom)
+                );
+
+                // COL DESDE ARRIBA (cayendo sobre plataforma)
+                if (minOverlap == overlapBottom && velocidadY <= 0) {
+                    y = plataforma.y + plataforma.height;
+                    velocidadY = 0;
+                    tocandoPiso = true;
+                } // COL DESDE ABAJO (golpear techo)
+                else if (minOverlap == overlapTop && velocidadY > 0) {
+                    y = plataforma.y - hitbox.height;
+                    velocidadY = 0;
+                } // COL LATERAL IZQUIERDA
+                else if (minOverlap == overlapLeft) {
+                    x = plataforma.x - hitbox.width;
+                } // COL LATERAL DERECHA
+                else if (minOverlap == overlapRight) {
+                    x = plataforma.x + plataforma.width;
+                }
+
+                // Actualizar hitbox con pos corregida
+                hitbox.setPosition(x, y);
+            }
+        }
+
+        // Si no hay colisiones verticales, no esta en el piso
+        if (velocidadY != 0 && !tocandoPiso) {
+            tocandoPiso = false;
+        }
     }
 
     @Override
     public void render(SpriteBatch batch) {//Pedir el batch
-        batch.draw(sprite, x, y,hitbox.width,hitbox.height);//Lo dibuja con el tamano de eso
-        
+        batch.draw(sprite, x, y, hitbox.width, hitbox.height);//Lo dibuja con el tamano de eso
+
     }
 }

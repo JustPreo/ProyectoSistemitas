@@ -7,6 +7,7 @@ package com.monkey.com.Main;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import java.util.ArrayList;
 
 /**
  *
@@ -21,9 +22,10 @@ public abstract class PlayerController {
     public boolean tocandoPiso;//Para revisar si toca el piso o no?
     protected boolean activo;
     protected Rectangle hitbox;//Hitbox
+    protected ArrayList<Rectangle> mapaPlataformas;
 
     
-    public PlayerController(String texturaPath,float xI , float yI,float velocidad){
+    public PlayerController(String texturaPath,float xI , float yI,float velocidad,ArrayList<Rectangle> mapaPlataformas){
     this.sprite = new Texture(texturaPath);
     this.x = xI;
     this.y = yI;
@@ -31,6 +33,7 @@ public abstract class PlayerController {
     this.velocidadY = 0;
     this.gravedad = -500;//Aun no se , hay que ver como manejar esto
     this.tocandoPiso = true;
+    this.mapaPlataformas = mapaPlataformas;
     activo = false;
     }
     
@@ -63,6 +66,10 @@ public abstract class PlayerController {
 
     public Rectangle getHitbox() {
         return hitbox;
+    }
+
+    public float getVelocidadY() {
+        return velocidadY;
     }
     
     
