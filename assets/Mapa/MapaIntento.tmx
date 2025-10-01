@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="18" tileheight="18" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="18" tileheight="18" infinite="0" nextlayerid="4" nextobjectid="12">
  <tileset firstgid="1" source="tiles_packed.tsx"/>
  <layer id="2" name="BG" width="32" height="32">
   <data encoding="csv">
@@ -37,7 +37,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="1" name="Coll" width="32" height="32">
+ <layer id="1" name="CollLayer" width="32" height="32">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -73,4 +73,10 @@
 156,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,158
 </data>
  </layer>
+ <objectgroup id="3" name="Coll">
+  <object id="7" x="0" y="522" width="576" height="54"/>
+  <object id="8" x="450" y="468" width="18" height="54"/>
+  <object id="9" x="378" y="468" width="72"/>
+  <object id="10" x="378" y="468" width="72" height="18"/>
+ </objectgroup>
 </map>

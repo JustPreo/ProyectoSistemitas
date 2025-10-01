@@ -43,11 +43,7 @@ public class Prisionero extends PlayerController {
         velocidadY += gravedad * delta;
         y += velocidadY * delta;
         //Agregar despues lo de saber si esta en suelo o no\
-        if (y <= 100) {
-            y = 100;
-            velocidadY = 0;
-            tocandoPiso = true;
-        }
+        
         
         hitbox.x = x;
         hitbox.y = y;

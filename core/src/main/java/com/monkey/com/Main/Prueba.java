@@ -54,7 +54,7 @@ public class Prueba implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         batch = new SpriteBatch();
-        prisionero = new Prisionero("Humano/Humano.png", 100, 100, 200);
+        prisionero = new Prisionero("Humano/Humano.png", 100, 500, 200);
         mono = new Mono("Humano/Humano.png", 150, 100, 200);
         //Creamos las camaras
         camera = new OrthographicCamera();
@@ -75,21 +75,18 @@ public class Prueba implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
             switchController();
         }
-        prisionero.update(f);
-        mono.update(f);
+        
         //Tiene que seguir al activo so consigue su hitbox 
 
         float targetX = activo ? mono.getX() : prisionero.getX();
         float targetY = activo ? mono.getY() : prisionero.getY();
 
         camera.position.x = targetX + CamMargX;
-        camera.position.y = CamHeight + CamMargY;
+        camera.position.y = targetY + CamMargY;
         MapLayer collisionLayer = map.getLayers().get("Coll");
-        if (collisionLayer != null) {
             for (MapObject object : collisionLayer.getObjects()) {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
                     //Col Prisionero
                     if (prisionero.getHitbox().overlaps(rect)) {
                         float floorY = rect.y + rect.height;
@@ -107,6 +104,8 @@ public class Prueba implements Screen {
                     }
                 }
             }
+            prisionero.update(f);
+        mono.update(f);
 
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -132,7 +131,7 @@ public class Prueba implements Screen {
             }
             shapes.end();
 
-        }
+        
     }
 
     private void switchController() {
