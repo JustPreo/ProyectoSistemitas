@@ -39,7 +39,7 @@ public class Prueba implements Screen {
     private OrthographicCamera camera;
     private final float CamWidth = 800;
     private final float CamHeight = 400;
-    private final float CamMargX = 200;//Margen H
+    private final float CamMargX = 100;//Margen H
     private final float CamMargY = 100;
 
     //El shaperenderer
@@ -78,14 +78,14 @@ public class Prueba implements Screen {
             }
         }
 
-        // Guardar puertas que podrían desaparecer
+        // Guardar puertas que podrian desaparecer
         MapLayer doorLayer = map.getLayers().get("DoorsColl");
         for (MapObject object : doorLayer.getObjects()) {
             if ("puerta".equals(object.getProperties().get("type", String.class))) {
                 paredes.add(object);
                 if (object instanceof RectangleMapObject) {
                     Rectangle r = ((RectangleMapObject) object).getRectangle();
-                    colisiones.add(r); // <-- Esto es clave
+                    colisiones.add(r); // Argentina es clave
                 }
                 System.out.println("Puerta ++");
             }

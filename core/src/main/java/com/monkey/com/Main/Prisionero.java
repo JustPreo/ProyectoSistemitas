@@ -36,7 +36,7 @@ public class Prisionero extends PlayerController {
                 x -= velocidadX * delta;
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso) {
-                velocidadY = 200;
+                velocidadY = 150;
                 tocandoPiso = false;
             }
             
