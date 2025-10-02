@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.monkey.com.Main;
+package com.monkey.com.Main.Objetos;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -14,52 +14,59 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class Mono extends PlayerController {
+public class Prisionero extends PlayerController {
 
-    public Mono(String texturaPath, float xI, float yI, float velocidad, ArrayList<Rectangle> mapaPlataformas) {
+    public Prisionero(String texturaPath, float xI, float yI, float velocidad, ArrayList<Rectangle> mapaPlataformas) {
         super(texturaPath, xI, yI, velocidad, mapaPlataformas);
-        this.hitbox = new Rectangle(x, y, 32, 32);//Tamano sprite    
+        this.hitbox = new Rectangle(x, y, 32, 64);//Tamano sprite
     }
-//El movimiento es mas rapido y el puede subir ("Tengo que agregar eso a futuro")- Talvez E para subir o algo asi
-    //Tambien tiene que ser mas rapido que el humano )?
 
-    @Override
-    public void update(float delta
-    ) {
+    public void update(float delta) {
+        // Guardar posicion anterior
         delta = Math.min(delta, 0.05f);//limito delta
         float oldX = x;
         float oldY = y;
-        if (activo) {
 
-            //Vamos a ver los movimientos
+        // Movimiento horizontal
+        if (activo) {
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                x += (velocidadX + 50) * delta;//
+                x += velocidadX * delta;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                x -= (velocidadX + 50) * delta;
+                x -= velocidadX * delta;
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso)//Creo que justPressed seria mejor para que no revise doble salto o algo asi
-            {
-                System.out.println("Wtf Mono");
-                velocidadY = 300;//Cambiar parametro a futuro (Osea que salte mas)
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso) {
+                velocidadY = 150;
                 tocandoPiso = false;
             }
+
         }
 
-        //Agregar gravedad a la velocidad de y
+        // Aplicar gravedad
         velocidadY += gravedad * delta;
         y += velocidadY * delta;
-        //Agregar despues lo de saber si esta en suelo o no\
+
+        // Actualizar hitbox con nueva pos
         hitbox.setPosition(x, y);
+
+        // Reset flag de piso
         tocandoPiso = false;
+
+        // Verificar colisiones
         for (Rectangle plataforma : mapaPlataformas) {
             if (hitbox.overlaps(plataforma)) {
+
+                // Calcular overlap en cada dir
                 float overlapLeft = (hitbox.x + hitbox.width) - plataforma.x;
                 float overlapRight = (plataforma.x + plataforma.width) - hitbox.x;
                 float overlapTop = (hitbox.y + hitbox.height) - plataforma.y;
                 float overlapBottom = (plataforma.y + plataforma.height) - hitbox.y;
 
-                float minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));//Poner las los dos 
+                // Encontrar el overlap mínimo (indica la dir de la col)
+                float minOverlap = Math.min(
+                        Math.min(overlapLeft, overlapRight),
+                        Math.min(overlapTop, overlapBottom)
+                );
 
                 // COL DESDE ARRIBA (cayendo sobre plataforma)
                 if (minOverlap == overlapBottom && velocidadY <= 0) {
@@ -80,20 +87,17 @@ public class Mono extends PlayerController {
 
                 // Actualizar hitbox con pos corregida
                 hitbox.setPosition(x, y);
-
-                if (velocidadY != 0 && !tocandoPiso) {
-                    tocandoPiso = false;
-                }
-
             }
         }
 
-        hitbox.x = x;
-        hitbox.y = y;
+        // Si no hay colisiones verticales, no esta en el piso
+        if (velocidadY != 0 && !tocandoPiso) {
+            tocandoPiso = false;
+        }
     }
 
     @Override
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch) {//Pedir el batch
         batch.draw(sprite, x, y, hitbox.width, hitbox.height);//Lo dibuja con el tamano de eso
 
     }

@@ -8,11 +8,11 @@
     ],
     "fileStates": {
         "Mapa1.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 4,
+            "scale": 2,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 716,
-                "y": 730
+                "x": 794,
+                "y": 490.5
             }
         },
         "Tileset.tsx": {
