@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object width="256" height="64">
+  <text fontfamily="Pixeloid Sans" pixelsize="13" wrap="1" bold="1">           Usa [TAB] 
+Para cambiar de personaje</text>
+ </object>
+</template>

@@ -22,7 +22,9 @@ public class Level {
     private ArrayList<RectangleMapObject> palancas = new ArrayList<>();
     private ArrayList<MapObject> paredes = new ArrayList<>();
     private ArrayList<RectangleMapObject> ropes = new ArrayList<>();
-
+    private ArrayList<RectangleMapObject> electricidad = new ArrayList<>();
+    private ArrayList<RectangleMapObject> WINCHECK = new ArrayList<>();
+    private boolean win = false;
     public Level(String tmxPath) {
         map = new TmxMapLoader().load(tmxPath);
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -62,6 +64,24 @@ public class Level {
                 }
             }
         }
+        //CollElectricidad
+        MapLayer electricidadLayer = map.getLayers().get("ElectricidadColl");
+        if (electricidadLayer != null) {
+            for (MapObject object : electricidadLayer.getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    electricidad.add((RectangleMapObject) object);
+                }
+            }
+        }
+        //Colisiones de win - fin de mapa
+        MapLayer wincheck = map.getLayers().get("WINCHECK");
+        if (wincheck != null) {
+            for (MapObject object : wincheck.getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    WINCHECK.add((RectangleMapObject) object);
+                }
+            }
+        }
 
         // DoorsColl -Tipo Puerta
         MapLayer doorLayer = map.getLayers().get("DoorsColl");
@@ -80,10 +100,14 @@ public class Level {
         }
     }
 
+    
+
     // Getters
     public ArrayList<Rectangle> getColisiones() { return colisiones; }
     public ArrayList<RectangleMapObject> getPalancas() { return palancas; }
     public ArrayList<RectangleMapObject> getRopes() { return ropes; }
+    public ArrayList<RectangleMapObject> getElectricidad() { return electricidad; }
+    public ArrayList<RectangleMapObject> getWINCHECK() {return WINCHECK;}
     public ArrayList<MapObject> getParedes() { return paredes; }
     public OrthogonalTiledMapRenderer getRenderer() { return renderer; }
     
@@ -92,5 +116,13 @@ public class Level {
     public void dispose() {
         if (renderer != null) renderer.dispose();
         if (map != null) map.dispose();
+    }
+    public boolean getWin()
+    {
+    return win;
+    }
+    public void setWin(boolean winCheck)
+    {
+    win = winCheck;
     }
 }

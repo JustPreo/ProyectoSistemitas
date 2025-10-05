@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object width="32" height="64">
+  <properties>
+   <property name="id" value="puerta1"/>
+   <property name="type" value="puerta"/>
+  </properties>
+ </object>
+</template>

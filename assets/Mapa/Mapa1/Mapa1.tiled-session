@@ -5,33 +5,76 @@
     },
     "activeFile": "Mapa1.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
-        "Mapa1.tmx": {
-            "scale": 2,
-            "selectedLayer": 5,
+        "Lvl1.tmx": {
+            "expandedObjectLayers": [
+                17,
+                19,
+                18,
+                14,
+                16
+            ],
+            "scale": 1,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 794,
-                "y": 490.5
+                "x": 744,
+                "y": 551
+            }
+        },
+        "Lvl5.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 560,
+                "y": 210
+            }
+        },
+        "Mapa1.tmx": {
+            "expandedObjectLayers": [
+                6,
+                4,
+                9,
+                11,
+                3
+            ],
+            "scale": 0.75,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 727.9999999999999,
+                "y": 513.3333333333333
+            }
+        },
+        "TemplateMapas.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 544,
+                "y": -78
             }
         },
         "Tileset.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 0.75,
             "scaleInEditor": 1
         }
     },
     "last.imagePath": "C:/Users/user/Desktop/ProyectoJam/assets/Mapa/Mapa1",
+    "last.objectTemplatePath": "C:/Users/user/Desktop/ProyectoJam/assets/Mapa/Mapa1",
     "map.height": 24,
     "map.lastUsedFormat": "tmx",
-    "map.width": 45,
+    "map.width": 35,
     "openFiles": [
         "Mapa1.tmx",
-        "Tileset.tsx"
+        "Tileset.tsx",
+        "Lvl1.tmx"
     ],
     "project": "Mapa1.tiled-project",
     "recentFiles": [
+        "Lvl1.tmx",
         "Tileset.tsx",
-        "Mapa1.tmx"
+        "Mapa1.tmx",
+        "Lvl5.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }

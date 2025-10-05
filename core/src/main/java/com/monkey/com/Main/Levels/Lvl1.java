@@ -18,31 +18,23 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
-/**
- *
- * @author user
- */
-public class Prueba implements Screen {
+public class Lvl1 implements Screen {
 
-    //Voy a llamar los cosos de spritebatch y eso
     private SpriteBatch batch;
     private Prisionero prisionero;
     private Mono mono;
-    private boolean activo = false; // T = mono // F = Prisionero
+    private boolean activo = false;
     private float timer = 0;
     private float timerWin = 0;
 
-    //Camara para juego
     private OrthographicCamera camera;
     private final float CamWidth = 800;
     private final float CamHeight = 400;
-    private final float CamMargX = 100;//Margen H
+    private final float CamMargX = 100;
     private final float CamMargY = 100;
 
-    //El shaperenderer
-    ShapeRenderer shapes;
+    private ShapeRenderer shapes;
 
-    // Level manager (nuevo)
     private Level level;
     private TiledMap map;
     private ArrayList<Rectangle> colisiones = new ArrayList<>();
@@ -55,8 +47,7 @@ public class Prueba implements Screen {
 
     @Override
     public void show() {
-        // Cargar Level 
-        level = new Level("Mapa/Mapa1/Mapa1.tmx");
+        level = new Level("Mapa/Mapa1/Lvl1.tmx"); // mapa Lvl1
         renderer = level.getRenderer();
         map = level.getMap();
 
@@ -67,15 +58,13 @@ public class Prueba implements Screen {
         electricidad = level.getElectricidad();
         revisarwin = level.getWINCHECK();
 
-        // Crear batch y personajes
         batch = new SpriteBatch();
-        prisionero = new Prisionero("Humano/Humano.png", 350, 100, 200, colisiones);
-        mono = new Mono("Humano/Humano.png", 300, 100, 200, colisiones);
+        prisionero = new Prisionero("Humano/Humano.png", 350, 64, 200, colisiones);
+        mono = new Mono("Humano/Humano.png", 300, 64, 200, colisiones);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, CamWidth, CamHeight);
 
-        // ShapeRenderer para debug
         shapes = new ShapeRenderer();
     }
 
@@ -83,18 +72,10 @@ public class Prueba implements Screen {
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
 
-        // Timer para cooldown de cambio de personaje
-        if (timer <= 1.5f) {
-            timer += delta;
-        }
-        if (timerWin <= 0.5f) {
-            timerWin += delta;
-        }
+        if (timer <= 1.5f) timer += delta;
+        if (timerWin <= 0.5f) timerWin += delta;
 
-        // Cambio de personaje con TAB
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            switchController();
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) switchController();
 
         prisionero.update(delta);
 
@@ -104,11 +85,12 @@ public class Prueba implements Screen {
         camera.position.y = targetY + CamMargY;
         camera.update();
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.setView(camera);
 
+        // indices de capas
         int bgIndex = map.getLayers().getIndex("BG");
         int pisoIndex = map.getLayers().getIndex("Piso");
         int decorIndex = map.getLayers().getIndex("Decor");
@@ -116,14 +98,7 @@ public class Prueba implements Screen {
         int ropesIndex = map.getLayers().getIndex("Ropes");
         int electricidadIndex = map.getLayers().getIndex("Electricidad");
 
-        renderer.render(new int[]{
-            bgIndex,
-            pisoIndex,
-            doorsIndex,
-            ropesIndex,
-            electricidadIndex,
-            decorIndex
-        });
+        renderer.render(new int[]{bgIndex,pisoIndex,doorsIndex,ropesIndex,electricidadIndex,decorIndex});
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -131,24 +106,44 @@ public class Prueba implements Screen {
         mono.render(batch);
         batch.end();
 
-        //Foreground
         int foregroundIndex = map.getLayers().getIndex("Foreground");
-        if (foregroundIndex != -1) {
-            renderer.render(new int[]{foregroundIndex});
-        }
+        if (foregroundIndex != -1) renderer.render(new int[]{foregroundIndex});
 
+        handlePalancas();
+        handleRopes(delta);
+        handleHitboxes();
+        handleElectricidad();
+        if (timerWin >= 0.5f && !level.getWin()) {
+            timerWin = 0;
+            revisarWin();
+        }
+    }
+
+    private void switchController() {
+        if (!activo && timer >= 1) {
+            mono.cambiarEstado(true);
+            prisionero.cambiarEstado(false);
+            activo = true;
+            timer = 0;
+        } else if (activo && timer >= 1) {
+            prisionero.cambiarEstado(true);
+            mono.cambiarEstado(false);
+            activo = false;
+            timer = 0;
+        }
+    }
+
+    private void handlePalancas() {
         MapLayer collLayer = map.getLayers().get("Coll");
         TiledMapTileLayer doorLayer = null;
-        if (map.getLayers().get("Doors") instanceof TiledMapTileLayer) {
+        if (map.getLayers().get("Doors") instanceof TiledMapTileLayer)
             doorLayer = (TiledMapTileLayer) map.getLayers().get("Doors");
-        }
 
         int tileWidth = 32;
         int tileHeight = 32;
 
         for (RectangleMapObject palancaObj : palancas) {
             Rectangle palancaRect = palancaObj.getRectangle();
-
             if (mono.getHitbox().overlaps(palancaRect)) {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E) && activo) {
                     String target = palancaObj.getProperties().get("target", String.class);
@@ -163,7 +158,6 @@ public class Prueba implements Screen {
 
                     if (paredABorrar != null && collLayer != null) {
                         collLayer.getObjects().remove(paredABorrar);
-
                         if (paredABorrar instanceof RectangleMapObject) {
                             Rectangle r = ((RectangleMapObject) paredABorrar).getRectangle();
                             colisiones.remove(r);
@@ -174,105 +168,64 @@ public class Prueba implements Screen {
                                 int endX = (int) ((r.x + r.width) / tileWidth);
                                 int endY = (int) ((r.y + r.height) / tileHeight);
 
-                                for (int x = startX; x < endX; x++) {
-                                    for (int y = startY; y < endY; y++) {
-                                        doorLayer.setCell(x, y, null);
-                                    }
-                                }
+                                for (int x=startX; x<endX; x++)
+                                    for (int y=startY; y<endY; y++)
+                                        doorLayer.setCell(x,y,null);
                             }
                         }
-
-                        System.out.println("Palanca activada, puerta eliminada: " + target);
                     }
                 }
             }
         }
+    }
 
-        // Escaleras
+    private void handleRopes(float delta){
         mono.setEnEscalera(false);
         for (RectangleMapObject ropesObj : ropes) {
-            Rectangle ropesRect = ropesObj.getRectangle();
-            if (mono.getHitbox().overlaps(ropesRect)) {
-                mono.setEnEscalera(true);
-            }
+            if (mono.getHitbox().overlaps(ropesObj.getRectangle())) mono.setEnEscalera(true);
         }
-
         mono.update(delta);
         mono.subirEscalera(delta);
+    }
 
-        // Dibujar hitbox (debug)
+    private void handleHitboxes() {
         shapes.setProjectionMatrix(camera.combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
         shapes.setColor(Color.RED);
-        if (activo) {
-            shapes.rect(mono.getHitbox().x, mono.getHitbox().y,
-                    mono.getHitbox().getWidth(), mono.getHitbox().getHeight());
-        } else {
-            shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y,
-                    prisionero.getHitbox().getWidth(), prisionero.getHitbox().getHeight());
-        }
+        if (activo)
+            shapes.rect(mono.getHitbox().x, mono.getHitbox().y, mono.getHitbox().getWidth(), mono.getHitbox().getHeight());
+        else
+            shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y, prisionero.getHitbox().getWidth(), prisionero.getHitbox().getHeight());
         shapes.end();
-
-        // Electricidad
-        for (RectangleMapObject electricidadObj : electricidad) {
-            Rectangle electricidadRect = electricidadObj.getRectangle();
-            if (mono.getHitbox().overlaps(electricidadRect) || prisionero.getHitbox().overlaps(electricidadRect)) {
-                System.out.println("Reiniciar NIVEL");
-            }
-        }
-        
-        
-        if (timerWin>= 0.5f && level.getWin() == false)
-        {
-        timerWin = 0;
-        revisarWin();
-        }
     }
 
-    private void switchController() {
-        if (!activo && timer >= 1) {
-            mono.cambiarEstado(true);
-            prisionero.cambiarEstado(false);
-            activo = !activo;
-            timer = 0;
-            Gdx.input.setOnscreenKeyboardVisible(false);
-            System.out.println("Mono caminando");
-        } else if (activo && timer >= 1) {
-            prisionero.cambiarEstado(true);
-            mono.cambiarEstado(false);
-            activo = !activo;
-            timer = 0;
-            System.out.println("Prisionero caminando");
-            Gdx.input.setOnscreenKeyboardVisible(false);
+    private void handleElectricidad() {
+        for (RectangleMapObject eObj : electricidad) {
+            Rectangle eRect = eObj.getRectangle();
+            if (mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) {
+                System.out.println("Reiniciar NIVEL");
+            }
         }
     }
 
     private void revisarWin() {
         for (RectangleMapObject revisarObj : revisarwin) {
-            Rectangle revisardRect = revisarObj.getRectangle();
-            if (prisionero.getHitbox().overlaps(revisardRect) && mono.getHitbox().overlaps(revisardRect) && level.getWin()==false) {
+            Rectangle r = revisarObj.getRectangle();
+            if (prisionero.getHitbox().overlaps(r) && mono.getHitbox().overlaps(r) && !level.getWin()) {
                 System.out.println("WIN");
-                level.setWin(true);//Gano
+                level.setWin(true);
             }
         }
-
     }
 
     @Override
-    public void resize(int i, int i1) {
-    }
-
+    public void resize(int i, int i1) {}
     @Override
-    public void pause() {
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
@@ -280,8 +233,6 @@ public class Prueba implements Screen {
         prisionero.dispose();
         mono.dispose();
         shapes.dispose();
-        if (level != null) {
-            level.dispose();
-        }
+        if (level != null) level.dispose();
     }
 }
