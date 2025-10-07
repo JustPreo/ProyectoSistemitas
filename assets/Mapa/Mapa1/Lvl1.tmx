@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="35" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="20" nextobjectid="38">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="35" height="24" tilewidth="32" tileheight="32" infinite="0" nextlayerid="20" nextobjectid="44">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="BG" width="35" height="24">
   <data encoding="csv">
@@ -212,10 +212,20 @@
   <object id="37" x="256" y="672" width="64" height="32"/>
  </objectgroup>
  <objectgroup id="18" name="DoorsColl">
-  <object id="35" template="Puerta.tx" x="928" y="640"/>
+  <object id="42" x="928" y="640" width="32" height="64">
+   <properties>
+    <property name="id" value="puerta1"/>
+    <property name="type" value="puerta"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="14" name="Interactuables">
-  <object id="36" template="Palanca.tx" x="672" y="288"/>
+  <object id="43" x="672" y="288" width="32" height="32">
+   <properties>
+    <property name="target" value="puerta1"/>
+    <property name="type" value="palanca"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="19" name="WINCHECK">
   <object id="19" x="960" y="640" width="128" height="64"/>

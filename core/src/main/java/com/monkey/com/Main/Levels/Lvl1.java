@@ -66,16 +66,23 @@ public class Lvl1 implements Screen {
         camera.setToOrtho(false, CamWidth, CamHeight);
 
         shapes = new ShapeRenderer();
+
     }
 
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
 
-        if (timer <= 1.5f) timer += delta;
-        if (timerWin <= 0.5f) timerWin += delta;
+        if (timer <= 1.5f) {
+            timer += delta;
+        }
+        if (timerWin <= 0.5f) {
+            timerWin += delta;
+        }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) switchController();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            switchController();
+        }
 
         prisionero.update(delta);
 
@@ -85,7 +92,7 @@ public class Lvl1 implements Screen {
         camera.position.y = targetY + CamMargY;
         camera.update();
 
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.setView(camera);
@@ -98,7 +105,7 @@ public class Lvl1 implements Screen {
         int ropesIndex = map.getLayers().getIndex("Ropes");
         int electricidadIndex = map.getLayers().getIndex("Electricidad");
 
-        renderer.render(new int[]{bgIndex,pisoIndex,doorsIndex,ropesIndex,electricidadIndex,decorIndex});
+        renderer.render(new int[]{bgIndex, pisoIndex, doorsIndex, ropesIndex, electricidadIndex, decorIndex});
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -107,7 +114,9 @@ public class Lvl1 implements Screen {
         batch.end();
 
         int foregroundIndex = map.getLayers().getIndex("Foreground");
-        if (foregroundIndex != -1) renderer.render(new int[]{foregroundIndex});
+        if (foregroundIndex != -1) {
+            renderer.render(new int[]{foregroundIndex});
+        }
 
         handlePalancas();
         handleRopes(delta);
@@ -136,8 +145,9 @@ public class Lvl1 implements Screen {
     private void handlePalancas() {
         MapLayer collLayer = map.getLayers().get("Coll");
         TiledMapTileLayer doorLayer = null;
-        if (map.getLayers().get("Doors") instanceof TiledMapTileLayer)
+        if (map.getLayers().get("Doors") instanceof TiledMapTileLayer) {
             doorLayer = (TiledMapTileLayer) map.getLayers().get("Doors");
+        }
 
         int tileWidth = 32;
         int tileHeight = 32;
@@ -145,6 +155,7 @@ public class Lvl1 implements Screen {
         for (RectangleMapObject palancaObj : palancas) {
             Rectangle palancaRect = palancaObj.getRectangle();
             if (mono.getHitbox().overlaps(palancaRect)) {
+                System.out.println("PALANCA");
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E) && activo) {
                     String target = palancaObj.getProperties().get("target", String.class);
                     MapObject paredABorrar = null;
@@ -168,9 +179,11 @@ public class Lvl1 implements Screen {
                                 int endX = (int) ((r.x + r.width) / tileWidth);
                                 int endY = (int) ((r.y + r.height) / tileHeight);
 
-                                for (int x=startX; x<endX; x++)
-                                    for (int y=startY; y<endY; y++)
-                                        doorLayer.setCell(x,y,null);
+                                for (int x = startX; x < endX; x++) {
+                                    for (int y = startY; y < endY; y++) {
+                                        doorLayer.setCell(x, y, null);
+                                    }
+                                }
                             }
                         }
                     }
@@ -179,10 +192,12 @@ public class Lvl1 implements Screen {
         }
     }
 
-    private void handleRopes(float delta){
+    private void handleRopes(float delta) {
         mono.setEnEscalera(false);
         for (RectangleMapObject ropesObj : ropes) {
-            if (mono.getHitbox().overlaps(ropesObj.getRectangle())) mono.setEnEscalera(true);
+            if (mono.getHitbox().overlaps(ropesObj.getRectangle())) {
+                mono.setEnEscalera(true);
+            }
         }
         mono.update(delta);
         mono.subirEscalera(delta);
@@ -191,11 +206,21 @@ public class Lvl1 implements Screen {
     private void handleHitboxes() {
         shapes.setProjectionMatrix(camera.combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
+
+        // Dibuja hitbox del jugador
         shapes.setColor(Color.RED);
-        if (activo)
-            shapes.rect(mono.getHitbox().x, mono.getHitbox().y, mono.getHitbox().getWidth(), mono.getHitbox().getHeight());
-        else
-            shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y, prisionero.getHitbox().getWidth(), prisionero.getHitbox().getHeight());
+        if (activo) {
+            shapes.rect(mono.getHitbox().x, mono.getHitbox().y, mono.getHitbox().width, mono.getHitbox().height);
+        } else {
+            shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y, prisionero.getHitbox().width, prisionero.getHitbox().height);
+        }
+
+        // Dibuja puertas
+        shapes.setColor(Color.BLUE);
+        for (Rectangle r : colisiones) {
+            shapes.rect(r.x, r.y, r.width, r.height);
+        }
+
         shapes.end();
     }
 
@@ -219,13 +244,20 @@ public class Lvl1 implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {}
+    public void resize(int i, int i1) {
+    }
+
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
@@ -233,6 +265,8 @@ public class Lvl1 implements Screen {
         prisionero.dispose();
         mono.dispose();
         shapes.dispose();
-        if (level != null) level.dispose();
+        if (level != null) {
+            level.dispose();
+        }
     }
 }

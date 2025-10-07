@@ -32,7 +32,7 @@ public class Level {
     }
 
     private void loadLayers() {
-        // COLL layer -> rectángulos de colisión
+        // COLL layer -> rectangulos de colision
         MapLayer collisionLayer = map.getLayers().get("Coll");
         if (collisionLayer != null) {
             for (MapObject object : collisionLayer.getObjects()) {
@@ -87,13 +87,13 @@ public class Level {
         MapLayer doorLayer = map.getLayers().get("DoorsColl");
         if (doorLayer != null) {
             for (MapObject object : doorLayer.getObjects()) {
-                // Si en Tiled usaste property "type" = "puerta"
                 String type = object.getProperties().get("type", String.class);
                 if ("puerta".equals(type)) {
                     paredes.add(object);
                     if (object instanceof RectangleMapObject) {
                         Rectangle r = ((RectangleMapObject) object).getRectangle();
                         colisiones.add(r);
+                        System.out.println("Pueta cargada");
                     }
                 }
             }

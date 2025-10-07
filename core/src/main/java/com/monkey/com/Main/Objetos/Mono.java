@@ -44,7 +44,7 @@ public class Mono extends PlayerController {
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso)//Creo que justPressed seria mejor para que no revise doble salto o algo asi
             {
                 System.out.println("Wtf Mono");
-                velocidadY = 300;//Cambiar parametro a futuro (Osea que salte mas)
+                velocidadY = 332;//Cambiar parametro a futuro (Osea que salte mas)
                 tocandoPiso = false;
             }
         }
