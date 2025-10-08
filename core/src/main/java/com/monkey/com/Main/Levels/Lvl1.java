@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 public class Lvl1 implements Screen {
 
+    private Screen screenAnterior;
+
     private SpriteBatch batch;
     private Prisionero prisionero;
     private Mono mono;
@@ -32,6 +34,9 @@ public class Lvl1 implements Screen {
     private final float CamHeight = 400;
     private final float CamMargX = 100;
     private final float CamMargY = 100;
+
+    private boolean enMiniGame = false;
+    private CableMiniGame cableMiniGame;
 
     private ShapeRenderer shapes;
 
@@ -72,6 +77,10 @@ public class Lvl1 implements Screen {
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
+        if (enMiniGame && cableMiniGame != null) {
+            cableMiniGame.render(delta); // Solo renderiza el minijuego
+            return; // Pausa todo lo demás del Level
+        }
 
         if (timer <= 1.5f) {
             timer += delta;
@@ -167,6 +176,19 @@ public class Lvl1 implements Screen {
                         }
                     }
 
+                    if (!enMiniGame) {
+                        enMiniGame = true;
+                        screenAnterior = this; // Guardamos la pantalla actual
+                        cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
+                            enMiniGame = false;
+                            cableMiniGame.dispose();
+                            cableMiniGame = null;
+                            Gdx.input.setInputProcessor(null);
+                            System.out.println("A");
+                        });
+                        Gdx.input.setInputProcessor(cableMiniGame.new CableInput());
+                    }
+
                     if (paredABorrar != null && collLayer != null) {
                         collLayer.getObjects().remove(paredABorrar);
                         if (paredABorrar instanceof RectangleMapObject) {
@@ -181,6 +203,7 @@ public class Lvl1 implements Screen {
 
                                 for (int x = startX; x < endX; x++) {
                                     for (int y = startY; y < endY; y++) {
+                                        System.out.println("doorLayer");
                                         doorLayer.setCell(x, y, null);
                                     }
                                 }
@@ -227,8 +250,17 @@ public class Lvl1 implements Screen {
     private void handleElectricidad() {
         for (RectangleMapObject eObj : electricidad) {
             Rectangle eRect = eObj.getRectangle();
-            if (mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) {
-                System.out.println("Reiniciar NIVEL");
+            if ((mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) && !enMiniGame) {
+                /*enMiniGame = true;
+                screenAnterior = this; // Guardamos la pantalla actual
+                cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
+                    enMiniGame = false;
+                    cableMiniGame.dispose();
+                    cableMiniGame = null;
+                    Gdx.input.setInputProcessor(null);
+                    System.out.println("A");
+                });
+                Gdx.input.setInputProcessor(cableMiniGame.new CableInput());*/
             }
         }
     }
