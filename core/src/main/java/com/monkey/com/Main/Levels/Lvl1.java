@@ -37,6 +37,7 @@ public class Lvl1 implements Screen {
 
     private boolean enMiniGame = false;
     private CableMiniGame cableMiniGame;
+    private MinijuegoNumeros minijuegoNumeros;
 
     private ShapeRenderer shapes;
 
@@ -79,7 +80,11 @@ public class Lvl1 implements Screen {
         delta = Math.min(delta, 0.05f);
         if (enMiniGame && cableMiniGame != null) {
             cableMiniGame.render(delta); // Solo renderiza el minijuego
-            return; // Pausa todo lo demás del Level
+            return; // Pausa todo lo del Level
+        }
+        if (enMiniGame && minijuegoNumeros != null) {
+            minijuegoNumeros.render(delta);
+            return;
         }
 
         if (timer <= 1.5f) {
@@ -178,7 +183,7 @@ public class Lvl1 implements Screen {
 
                     if (!enMiniGame) {
                         enMiniGame = true;
-                        screenAnterior = this; // Guardamos la pantalla actual
+                        screenAnterior = this; //pantalla actual
                         cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
                             enMiniGame = false;
                             cableMiniGame.dispose();
@@ -247,11 +252,11 @@ public class Lvl1 implements Screen {
         shapes.end();
     }
 
-    private void handleElectricidad() {
+    /*private void handleElectricidad() {
         for (RectangleMapObject eObj : electricidad) {
             Rectangle eRect = eObj.getRectangle();
             if ((mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) && !enMiniGame) {
-                /*enMiniGame = true;
+                enMiniGame = true;
                 screenAnterior = this; // Guardamos la pantalla actual
                 cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
                     enMiniGame = false;
@@ -260,7 +265,25 @@ public class Lvl1 implements Screen {
                     Gdx.input.setInputProcessor(null);
                     System.out.println("A");
                 });
-                Gdx.input.setInputProcessor(cableMiniGame.new CableInput());*/
+                Gdx.input.setInputProcessor(cableMiniGame.new CableInput());
+            }
+        }
+    }*/
+    private void handleElectricidad() {
+        for (RectangleMapObject eObj : electricidad) {
+            Rectangle eRect = eObj.getRectangle();
+            if ((mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) && !enMiniGame) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    enMiniGame = true;
+                    System.out.println("A");
+                    screenAnterior = this; // Guardamos esta pantalla
+                    minijuegoNumeros = new MinijuegoNumeros(() -> {
+                        enMiniGame = false;
+                        minijuegoNumeros.dispose();
+                        minijuegoNumeros = null;
+                        System.out.println("Minijuego completado, regresando a Lvl1");
+                    });
+                }
             }
         }
     }

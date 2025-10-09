@@ -10,17 +10,17 @@
     "fileStates": {
         "Lvl1.tmx": {
             "expandedObjectLayers": [
-                17,
+                14,
                 19,
+                17,
                 18,
-                16,
-                14
+                16
             ],
             "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 426,
-                "y": 228.5
+                "x": 420.75,
+                "y": 270
             }
         },
         "Lvl5.tmx": {
@@ -33,17 +33,17 @@
         },
         "Mapa1.tmx": {
             "expandedObjectLayers": [
-                9,
-                4,
-                11,
                 3,
-                6
+                9,
+                11,
+                6,
+                4
             ],
             "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 700,
-                "y": 756.6666666666665
+                "x": 702,
+                "y": 410
             }
         },
         "TemplateMapas.tmx": {
