@@ -10,17 +10,50 @@
     "fileStates": {
         "Lvl1.tmx": {
             "expandedObjectLayers": [
-                14,
-                19,
-                17,
+                15,
                 18,
-                16
+                14,
+                16,
+                19,
+                17
             ],
-            "scale": 2,
+            "scale": 0.75,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": 502.66666666666674,
+                "y": 288.66666666666663
+            }
+        },
+        "Lvl2.tmx": {
+            "expandedObjectLayers": [
+                9,
+                11,
+                12,
+                10,
+                8,
+                13
+            ],
+            "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 420.75,
-                "y": 270
+                "x": 516,
+                "y": 481.99999999999994
+            }
+        },
+        "Lvl3.tmx": {
+            "expandedObjectLayers": [
+                9,
+                11,
+                14,
+                12,
+                8,
+                13
+            ],
+            "scale": 1.5,
+            "selectedLayer": 7,
+            "viewCenter": {
+                "x": 535,
+                "y": 54
             }
         },
         "Lvl5.tmx": {
@@ -33,17 +66,17 @@
         },
         "Mapa1.tmx": {
             "expandedObjectLayers": [
-                3,
                 9,
                 11,
-                6,
-                4
+                4,
+                3,
+                6
             ],
             "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 702,
-                "y": 410
+                "x": 710.6666666666666,
+                "y": 757.3333333333333
             }
         },
         "TemplateMapas.tmx": {
@@ -71,6 +104,7 @@
     ],
     "project": "Mapa1.tiled-project",
     "recentFiles": [
+        "Lvl3.tmx",
         "Mapa1.tmx",
         "Tileset.tsx",
         "Lvl1.tmx",

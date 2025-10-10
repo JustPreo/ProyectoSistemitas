@@ -25,10 +25,15 @@ public class Level {
     private ArrayList<RectangleMapObject> electricidad = new ArrayList<>();
     private ArrayList<RectangleMapObject> WINCHECK = new ArrayList<>();
     private boolean win = false;
-    public Level(String tmxPath) {
+      protected GameOverMenu gameOverMenu;
+      public Level(String tmxPath) {
+        // Carga mapa
         map = new TmxMapLoader().load(tmxPath);
         renderer = new OrthogonalTiledMapRenderer(map);
         loadLayers();
+
+        // Inicializar menú de game over
+        gameOverMenu = new GameOverMenu();
     }
 
     private void loadLayers() {
@@ -46,7 +51,7 @@ public class Level {
         // Interactuables - palancas u objetos 
         MapLayer palancaLayer = map.getLayers().get("Interactuables");
         if (palancaLayer != null) {
-            for (MapObject object : palancaLayer.getObjects()) {
+            for (MapObject object : palancaLayer.getObjects()) {//No solo es palancas si no que es todo 
                 if (object instanceof RectangleMapObject) {
                     palancas.add((RectangleMapObject) object);
                 }
@@ -124,5 +129,8 @@ public class Level {
     public void setWin(boolean winCheck)
     {
     win = winCheck;
+    }
+    public GameOverMenu getGameOverMenu() {
+        return gameOverMenu;
     }
 }

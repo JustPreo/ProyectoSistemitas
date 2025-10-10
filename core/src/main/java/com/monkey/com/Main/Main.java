@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.monkey.com.Main.Levels.Lvl1;
+import com.monkey.com.Main.Levels.Lvl2;
+import com.monkey.com.Main.Levels.Lvl3;
 import com.monkey.com.Main.Menus.MenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -18,6 +20,6 @@ public class Main extends Game {
     public void create() {
         //setScreen(new MenuScreen());
         //setScreen(new TestMapa());
-        setScreen(new Lvl1());
+        setScreen(new Lvl3());
     }
 }

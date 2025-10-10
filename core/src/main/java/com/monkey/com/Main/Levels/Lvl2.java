@@ -1,9 +1,8 @@
 package com.monkey.com.Main.Levels;
 
-import com.monkey.com.Main.Objetos.Mono;
-import com.monkey.com.Main.Objetos.Prisionero;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,17 +15,14 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
-import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.MENU_PRINCIPAL;
-import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.NINGUNA;
-import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.REINTENTAR;
-import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.SIGUIENTE_NIVEL;
 import com.monkey.com.Main.Main;
 import com.monkey.com.Main.Menus.MenuScreen;
+import com.monkey.com.Main.Objetos.Mono;
+import com.monkey.com.Main.Objetos.Prisionero;
+
 import java.util.ArrayList;
 
-public class Lvl1 implements Screen {
-
-    private Screen screenAnterior;
+public class Lvl2 implements Screen {
 
     private SpriteBatch batch;
     private Prisionero prisionero;
@@ -49,20 +45,22 @@ public class Lvl1 implements Screen {
 
     private Level level;
     private TiledMap map;
-    private ArrayList<Rectangle> colisiones = new ArrayList<>();
-    private ArrayList<RectangleMapObject> palancas = new ArrayList<>();
-    private ArrayList<MapObject> paredes = new ArrayList<>();
-    private ArrayList<RectangleMapObject> ropes = new ArrayList<>();
-    private ArrayList<RectangleMapObject> electricidad = new ArrayList<>();
-    private ArrayList<RectangleMapObject> revisarwin = new ArrayList<>();
+    private ArrayList<Rectangle> colisiones;
+    private ArrayList<RectangleMapObject> palancas;
+    private ArrayList<MapObject> paredes;
+    private ArrayList<RectangleMapObject> ropes;
+    private ArrayList<RectangleMapObject> electricidad;
+    private ArrayList<RectangleMapObject> revisarwin;
     private com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer renderer;
 
+    // Menú
     private GameOverMenu gameOverMenu;
     private boolean juegoEnPausa = false;
 
     @Override
     public void show() {
-        level = new Level("Mapa/Mapa1/Lvl1.tmx"); // mapa Lvl1
+        // Inicializar nivel
+        level = new Level("Mapa/Mapa1/Lvl2.tmx");
         renderer = level.getRenderer();
         map = level.getMap();
 
@@ -74,23 +72,23 @@ public class Lvl1 implements Screen {
         revisarwin = level.getWINCHECK();
 
         batch = new SpriteBatch();
-        prisionero = new Prisionero("Humano/Humano.png", 350, 64, 200, colisiones);
-        mono = new Mono("Humano/Humano.png", 300, 64, 200, colisiones);
+        prisionero = new Prisionero("Humano/Humano.png", 500, 64, 200, colisiones);
+        mono = new Mono("Humano/Humano.png", 500, 64, 200, colisiones);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, CamWidth, CamHeight);
 
         shapes = new ShapeRenderer();
 
-        //  Inicializar el menú
+        // Inicializar menú desde Level
         gameOverMenu = level.getGameOverMenu();
 
-        //  Input para menú
-        Gdx.input.setInputProcessor(new com.badlogic.gdx.InputAdapter() {
+        // Input
+        Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (gameOverMenu.estaMostrado()) {
-                    return true;
+                    return true; // Input es manejado por Stage del menú
                 }
                 return false;
             }
@@ -100,22 +98,13 @@ public class Lvl1 implements Screen {
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
-        if (enMiniGame && cableMiniGame != null) {
-            cableMiniGame.render(delta); // Solo renderiza el minijuego
-            return; // Pausa todo lo del Level
-        }
-        if (enMiniGame && minijuegoNumeros != null) {
-            minijuegoNumeros.render(delta);
-            return;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) mono.mejoraMono1();
-if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) mono.mejoraMono2();
-if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
 
-        // Renderizar menu si esta en pausa
+        // Si el juego está en pausa por menú
         if (juegoEnPausa) {
+            renderJuego();
             gameOverMenu.render(delta);
 
+            // Checar acción del menú
             GameOverMenu.MenuAction accion = gameOverMenu.getAccion();
             if (accion != GameOverMenu.MenuAction.NINGUNA) {
                 manejarAccionMenu(accion);
@@ -124,31 +113,50 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
             return;
         }
 
-        if (timer <= 1.5f) {
-            timer += delta;
-        }
-        if (timerWin <= 0.5f) {
-            timerWin += delta;
+        // Mini-juegos
+        if (enMiniGame) {
+            if (cableMiniGame != null) cableMiniGame.render(delta);
+            else if (minijuegoNumeros != null) minijuegoNumeros.render(delta);
+            return;
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
-            switchController();
-        }
+        // Timers
+        if (timer <= 1.5f) timer += delta;
+        if (timerWin <= 0.5f) timerWin += delta;
+
+        // Cambiar personaje
+        if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) switchController();
 
         prisionero.update(delta);
 
+        // Cámara
         float targetX = activo ? mono.getX() : prisionero.getX();
         float targetY = activo ? mono.getY() : prisionero.getY();
         camera.position.x = targetX + CamMargX;
         camera.position.y = targetY + CamMargY;
         camera.update();
 
+        renderJuego();
+
+        handlePalancas();
+        handleRopes(delta);
+        handleHitboxes();
+        handleElectricidad();
+        handleToolbox();
+
+        if (timerWin >= 0.5f && !level.getWin()) {
+            timerWin = 0;
+            revisarWin();
+        }
+    }
+
+    private void renderJuego() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.setView(camera);
 
-        // indices de capas
+        // Renderizar capas principales
         int bgIndex = map.getLayers().getIndex("BG");
         int pisoIndex = map.getLayers().getIndex("Piso");
         int decorIndex = map.getLayers().getIndex("Decor");
@@ -158,6 +166,7 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
 
         renderer.render(new int[]{bgIndex, pisoIndex, doorsIndex, ropesIndex, electricidadIndex, decorIndex});
 
+        // Renderizar jugadores
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         prisionero.render(batch);
@@ -165,18 +174,7 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         batch.end();
 
         int foregroundIndex = map.getLayers().getIndex("Foreground");
-        if (foregroundIndex != -1) {
-            renderer.render(new int[]{foregroundIndex});
-        }
-
-        handlePalancas();
-        handleRopes(delta);
-        handleHitboxes();
-        handleElectricidad();
-        if (timerWin >= 0.5f && !level.getWin()) {
-            timerWin = 0;
-            revisarWin();
-        }
+        if (foregroundIndex != -1) renderer.render(new int[]{foregroundIndex});
     }
 
     private void switchController() {
@@ -206,7 +204,6 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         for (RectangleMapObject palancaObj : palancas) {
             Rectangle palancaRect = palancaObj.getRectangle();
             if (mono.getHitbox().overlaps(palancaRect)) {
-                System.out.println("PALANCA");
                 if (Gdx.input.isKeyJustPressed(Input.Keys.E) && activo) {
                     String target = palancaObj.getProperties().get("target", String.class);
                     MapObject paredABorrar = null;
@@ -218,8 +215,6 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
                         }
                     }
 
-                    //miniJuegoCable();
-                    //Para llamar el miiJuegoDeCable
                     if (paredABorrar != null && collLayer != null) {
                         collLayer.getObjects().remove(paredABorrar);
                         if (paredABorrar instanceof RectangleMapObject) {
@@ -234,7 +229,6 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
 
                                 for (int x = startX; x < endX; x++) {
                                     for (int y = startY; y < endY; y++) {
-                                        System.out.println("doorLayer");
                                         doorLayer.setCell(x, y, null);
                                     }
                                 }
@@ -247,10 +241,8 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
     }
 
     private void handleToolbox() {
-        MapLayer collLayer = map.getLayers().get("Coll");
         MapLayer electricidadCollLayer = map.getLayers().get("ElectricidadColl");
         TiledMapTileLayer electricidadLayer = null;
-
         if (map.getLayers().get("Electricidad") instanceof TiledMapTileLayer) {
             electricidadLayer = (TiledMapTileLayer) map.getLayers().get("Electricidad");
         }
@@ -261,56 +253,64 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         for (RectangleMapObject palancaObj : palancas) {
             Rectangle palancaRect = palancaObj.getRectangle();
 
-            if (prisionero.getHitbox().overlaps(palancaRect)) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.E) && activo) {
-                    String type = palancaObj.getProperties().get("type", String.class);
-                    String target = palancaObj.getProperties().get("target", String.class);
+            if (prisionero.getHitbox().overlaps(palancaRect) && Gdx.input.isKeyJustPressed(Input.Keys.E) && !activo) {
+                String type = palancaObj.getProperties().get("type", String.class);
+                String target = palancaObj.getProperties().get("target", String.class);
 
-                    // Solo para palancas tipo "numeros"
-                    if ("numeros".equals(type) && target != null) {
-                        System.out.println("Palanca tipo 'numeros' activada con target: " + target);
+                if ("numeros".equals(type) && target != null) {
+                    miniJuegoNumeros(target, electricidadCollLayer, electricidadLayer, tileWidth, tileHeight);
+                }
+            }
+        }
+    }
 
-                        // Buscar objeto de electricidad con el mismo id (en ElectricidadColl)
-                        RectangleMapObject electricidadABorrar = null;
-                        if (electricidadCollLayer != null) {
-                            for (MapObject eObj : electricidadCollLayer.getObjects()) {
-                                String id = eObj.getProperties().get("id", String.class);
-                                if (id != null && id.equals(target) && eObj instanceof RectangleMapObject) {
-                                    electricidadABorrar = (RectangleMapObject) eObj;
-                                    break;
-                                }
-                            }
-                        }
+    private void miniJuegoNumeros(String target, MapLayer electricidadCollLayer, TiledMapTileLayer electricidadLayer, int tileWidth, int tileHeight) {
+        if (!enMiniGame) {
+            enMiniGame = true;
+            minijuegoNumeros = new MinijuegoNumeros(() -> {
+                enMiniGame = false;
+                minijuegoNumeros.dispose();
+                minijuegoNumeros = null;
+                Gdx.input.setInputProcessor(null);
+                System.out.println("Mini-juego num completado.");
 
-                        // 🔹 Si se encontró el objeto de electricidad, borrarlo
-                        if (electricidadABorrar != null) {
-                            Rectangle r = electricidadABorrar.getRectangle();
-
-                            // Quitar de la lista de colisiones
-                            colisiones.remove(r);
-                            // Quitar del layer
-                            electricidadCollLayer.getObjects().remove(electricidadABorrar);
-
-                            System.out.println("ElectricidadColl eliminada: " + target);
-
-                            // TAMBIEN borrar visualmente en la capa de tiles
-                            if (electricidadLayer != null) {
-                                int startX = (int) (r.x / tileWidth);
-                                int startY = (int) (r.y / tileHeight);
-                                int endX = (int) ((r.x + r.width) / tileWidth);
-                                int endY = (int) ((r.y + r.height) / tileHeight);
-
-                                for (int x = startX; x < endX; x++) {
-                                    for (int y = startY; y < endY; y++) {
-                                        electricidadLayer.setCell(x, y, null);
-                                    }
-                                }
-                                System.out.println("Electricidad visual eliminada en área del target.");
+                RectangleMapObject electricidadABorrar = null;
+                if (electricidadCollLayer != null) {
+                    for (MapObject obj : electricidadCollLayer.getObjects()) {
+                        if (obj instanceof RectangleMapObject) {
+                            String id = obj.getProperties().get("id", String.class);
+                            if (id != null && id.equals(target)) {
+                                electricidadABorrar = (RectangleMapObject) obj;
+                                break;
                             }
                         }
                     }
                 }
-            }
+
+                if (electricidadABorrar != null) {
+                    Rectangle r = electricidadABorrar.getRectangle();
+                    colisiones.remove(r);
+                    electricidad.remove(electricidadABorrar);
+
+                    if (electricidadCollLayer != null) {
+                        electricidadCollLayer.getObjects().remove(electricidadABorrar);
+                    }
+
+                    if (electricidadLayer != null) {
+                        int startX = (int) Math.floor(r.x / tileWidth);
+                        int startY = (int) Math.floor(r.y / tileHeight);
+                        int endX = (int) Math.ceil((r.x + r.width) / tileWidth);
+                        int endY = (int) Math.ceil((r.y + r.height) / tileHeight);
+
+                        for (int x = startX; x < endX; x++) {
+                            for (int y = startY; y < endY; y++) {
+                                electricidadLayer.setCell(x, y, null);
+                            }
+                        }
+                        System.out.println("Electricidad eliminada: " + target);
+                    }
+                }
+            });
         }
     }
 
@@ -325,98 +325,26 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         mono.subirEscalera(delta);
     }
 
-    private void miniJuegoCable() {
-        if (!enMiniGame) {
-            enMiniGame = true;
-            screenAnterior = this; //pantalla actual
-            cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
-                enMiniGame = false;
-                cableMiniGame.dispose();
-                cableMiniGame = null;
-                Gdx.input.setInputProcessor(null);
-                System.out.println("A");
-            });
-            Gdx.input.setInputProcessor(cableMiniGame.new CableInput());
-        }
-    }
-
-    private void miniJuegoNumeros() {
-        if (!enMiniGame) {
-            enMiniGame = true;
-            minijuegoNumeros = new MinijuegoNumeros(() -> {
-                enMiniGame = false;
-                minijuegoNumeros.dispose();
-                minijuegoNumeros = null;
-                Gdx.input.setInputProcessor(null);
-                System.out.println("Minijuego de números completado");
-            });
-        }
-    }
-
     private void handleHitboxes() {
         shapes.setProjectionMatrix(camera.combined);
         shapes.begin(ShapeRenderer.ShapeType.Line);
 
-        // Dibuja hitbox del jugador
         shapes.setColor(Color.RED);
-        if (activo) {
-            shapes.rect(mono.getHitbox().x, mono.getHitbox().y, mono.getHitbox().width, mono.getHitbox().height);
-        } else {
-            shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y, prisionero.getHitbox().width, prisionero.getHitbox().height);
-        }
+        if (activo) shapes.rect(mono.getHitbox().x, mono.getHitbox().y, mono.getHitbox().width, mono.getHitbox().height);
+        else shapes.rect(prisionero.getHitbox().x, prisionero.getHitbox().y, prisionero.getHitbox().width, prisionero.getHitbox().height);
 
-        // Dibuja puertas
         shapes.setColor(Color.BLUE);
-        for (Rectangle r : colisiones) {
-            shapes.rect(r.x, r.y, r.width, r.height);
-        }
+        for (Rectangle r : colisiones) shapes.rect(r.x, r.y, r.width, r.height);
 
         shapes.end();
     }
 
-    /*private void handleElectricidad() {
-        for (RectangleMapObject eObj : electricidad) {
-            Rectangle eRect = eObj.getRectangle();
-            if ((mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) && !enMiniGame) {
-                enMiniGame = true;
-                screenAnterior = this; // Guardamos la pantalla actual
-                cableMiniGame = new com.monkey.com.Main.Levels.CableMiniGame(() -> {
-                    enMiniGame = false;
-                    cableMiniGame.dispose();
-                    cableMiniGame = null;
-                    Gdx.input.setInputProcessor(null);
-                    System.out.println("A");
-                });
-                Gdx.input.setInputProcessor(cableMiniGame.new CableInput());
-            }
-        }
-    }*/
     private void handleElectricidad() {
         for (RectangleMapObject eObj : electricidad) {
             Rectangle eRect = eObj.getRectangle();
-            if ((mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) && !enMiniGame) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                    enMiniGame = true;
-                    System.out.println("A");
-                    screenAnterior = this; // Guardamos esta pantalla
-                    minijuegoNumeros = new MinijuegoNumeros(() -> {
-                        enMiniGame = false;
-                        minijuegoNumeros.dispose();
-                        minijuegoNumeros = null;
-                        System.out.println("Minijuego completado, regresando a Lvl1");
-                    });
-                }
-            }
-        }
-    }
-
-    private void revisarWin() {
-        for (RectangleMapObject revisarObj : revisarwin) {
-            Rectangle r = revisarObj.getRectangle();
-            if (prisionero.getHitbox().overlaps(r) && mono.getHitbox().overlaps(r) && !level.getWin()) {
-                System.out.println("WIN");
-                level.setWin(true);
-                  mostrarMenuCompletado();
+            if (mono.getHitbox().overlaps(eRect) || prisionero.getHitbox().overlaps(eRect)) {
+                mostrarMenuFallo();
+                return;
             }
         }
     }
@@ -424,6 +352,17 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
     private void mostrarMenuFallo() {
         juegoEnPausa = true;
         gameOverMenu.mostrar(GameOverMenu.MenuType.NIVEL_FALLIDO);
+    }
+
+    private void revisarWin() {
+        for (RectangleMapObject revisarObj : revisarwin) {
+            Rectangle r = revisarObj.getRectangle();
+            if (prisionero.getHitbox().overlaps(r) && mono.getHitbox().overlaps(r) && !level.getWin()) {
+                level.setWin(true);
+                mostrarMenuCompletado();
+                System.out.println("Nivel completado!");
+            }
+        }
     }
 
     private void mostrarMenuCompletado() {
@@ -437,7 +376,7 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         switch (accion) {
             case REINTENTAR:
                 dispose();
-                mainGame.setScreen(new Lvl1());//Reintentar
+                mainGame.setScreen(new Lvl2());
                 break;
 
             case MENU_PRINCIPAL:
@@ -448,7 +387,7 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
             case SIGUIENTE_NIVEL:
                 dispose();
                 System.out.println("Siguiente nivel");
-                mainGame.setScreen(new Lvl2());
+                //mainGame.setScreen(new Lvl3());
                 break;
 
             case NINGUNA:
@@ -457,20 +396,13 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
     }
 
     @Override
-    public void resize(int i, int i1) {
-    }
-
+    public void resize(int i, int i1) {}
     @Override
-    public void pause() {
-    }
-
+    public void pause() {}
     @Override
-    public void resume() {
-    }
-
+    public void resume() {}
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
@@ -478,8 +410,9 @@ if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) mono.mejoraMono3();
         prisionero.dispose();
         mono.dispose();
         shapes.dispose();
-        if (level != null) {
-            level.dispose();
-        }
+        if (level != null) level.dispose();
+        if (cableMiniGame != null) cableMiniGame.dispose();
+        if (minijuegoNumeros != null) minijuegoNumeros.dispose();
+        if (gameOverMenu != null) gameOverMenu.dispose();
     }
 }

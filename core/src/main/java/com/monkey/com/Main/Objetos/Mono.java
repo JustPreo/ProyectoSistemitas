@@ -6,6 +6,7 @@ package com.monkey.com.Main.Objetos;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
@@ -19,43 +20,51 @@ public class Mono extends PlayerController {
     private boolean enEscalera = false;
     private float climbingSpeed = 100;
 
+    // Atributos para mejoras
+    private int nivelMejora = 0;
+    private float bonusVelocidad = 0;
+    private float bonusSalto = 0;
+
     public Mono(String texturaPath, float xI, float yI, float velocidad, ArrayList<Rectangle> mapaPlataformas) {
         super(texturaPath, xI, yI, velocidad, mapaPlataformas);
-        this.hitbox = new Rectangle(x, y, 30, 30);//Tamano sprite    
+        this.hitbox = new Rectangle(x, y, 30, 30); // Tamaño sprite    
     }
-//El movimiento es mas rapido y el puede subir ("Tengo que agregar eso a futuro")- Talvez E para subir o algo asi
-    //Tambien tiene que ser mas rapido que el humano )?
 
     @Override
-    public void update(float delta
-    ) {
-        delta = Math.min(delta, 0.05f);//limito delta
+    public void update(float delta) {
+        delta = Math.min(delta, 0.05f); // Limito delta
         float oldX = x;
         float oldY = y;
-        if (activo) {
 
-            //Vamos a ver los movimientos
+        if (activo) {
+            // Movimiento lateral
             if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                x += (velocidadX + 50) * delta;//
+                x += (velocidadX + 50 + bonusVelocidad) * delta;
             }
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                x -= (velocidadX + 50) * delta;
+                x -= (velocidadX + 50 + bonusVelocidad) * delta;
             }
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso)//Creo que justPressed seria mejor para que no revise doble salto o algo asi
-            {
+
+            // Salto
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && tocandoPiso) {
                 System.out.println("Wtf Mono");
-                velocidadY = 332;//Cambiar parametro a futuro (Osea que salte mas)
+                velocidadY = 270 + bonusSalto; // El salto aumenta con las mejoras
                 tocandoPiso = false;
             }
         }
+
         if (!enEscalera) {
-            //Agregar gravedad a la velocidad de y
+            // Gravedad
             velocidadY += gravedad * delta;
         }
+
         y += velocidadY * delta;
-        //Agregar despues lo de saber si esta en suelo o no\
+
+        // Actualización de hitbox
         hitbox.setPosition(x, y);
         tocandoPiso = false;
+
+        // Colisiones con plataformas
         for (Rectangle plataforma : mapaPlataformas) {
             if (hitbox.overlaps(plataforma)) {
                 float overlapLeft = (hitbox.x + hitbox.width) - plataforma.x;
@@ -63,32 +72,32 @@ public class Mono extends PlayerController {
                 float overlapTop = (hitbox.y + hitbox.height) - plataforma.y;
                 float overlapBottom = (plataforma.y + plataforma.height) - hitbox.y;
 
-                float minOverlap = Math.min(Math.min(overlapLeft, overlapRight), Math.min(overlapTop, overlapBottom));//Poner las los dos 
+                float minOverlap = Math.min(Math.min(overlapLeft, overlapRight),
+                        Math.min(overlapTop, overlapBottom));
 
-                // COL DESDE ARRIBA (cayendo sobre plataforma)
+                // Colisión desde arriba (cayendo)
                 if (minOverlap == overlapBottom && velocidadY <= 0) {
                     y = plataforma.y + plataforma.height;
                     velocidadY = 0;
                     tocandoPiso = true;
-                } // COL DESDE ABAJO (golpear techo)
+                } // Colisión desde abajo (techo)
                 else if (minOverlap == overlapTop && velocidadY > 0) {
                     y = plataforma.y - hitbox.height;
                     velocidadY = 0;
-                } // COL LATERAL IZQUIERDA
+                } // Colisión izquierda
                 else if (minOverlap == overlapLeft) {
                     x = plataforma.x - hitbox.width;
-                } // COL LATERAL DERECHA
+                } // Colisión derecha
                 else if (minOverlap == overlapRight) {
                     x = plataforma.x + plataforma.width;
                 }
 
-                // Actualizar hitbox con pos corregida 
+                // Actualizar hitbox tras colisión
                 hitbox.setPosition(x, y);
 
                 if (velocidadY != 0 && !tocandoPiso) {
                     tocandoPiso = false;
                 }
-
             }
         }
 
@@ -103,12 +112,11 @@ public class Mono extends PlayerController {
         if (Gdx.input.isKeyPressed(Input.Keys.W) && activo) {
             y += climbingSpeed * delta;
             System.out.println("Subiendo");
-
         } else if (Gdx.input.isKeyPressed(Input.Keys.S) && activo) {
             y -= climbingSpeed * delta;
             System.out.println("Bajando");
         }
-        velocidadY = 0;//Cancelo gravedad
+        velocidadY = 0; // Cancela gravedad
         hitbox.setPosition(x, y);
     }
 
@@ -118,11 +126,48 @@ public class Mono extends PlayerController {
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.draw(sprite, x, y, hitbox.width, hitbox.height);//Lo dibuja con el tamano de eso
-
+        batch.draw(sprite, x, y, hitbox.width, hitbox.height);
     }
 
     public void setY(float y) {
         this.y += y;
+    }
+
+    
+    //                 FUNCIONES DE MEJORA DEL MONO
+    
+
+    public void mejoraMono1() {
+        
+            bonusVelocidad += 60;
+            bonusSalto += 15;
+           // sprite = new Texture("mono1.png");
+            nivelMejora = 1;
+            System.out.println("Mono mejorado a nivel 1: more rapido y salta mas alto!");
+        
+    }
+
+    public void mejoraMono2() {
+        
+            bonusVelocidad += 80;
+            bonusSalto += 30;
+           // sprite = new Texture("mono2.png");
+            nivelMejora = 2;
+            System.out.println("Mono mejorado a nivel 2: ahora aun mas agil y fuerte");
+        
+    }
+
+    public void mejoraMono3() {
+        
+            bonusVelocidad += 120;
+            bonusSalto += 45;
+            //sprite = new Texture("mono3.png");
+            nivelMejora = 3;
+            System.out.println("Mono alcanzo su forma definitiva!");
+        
+    }
+
+    public int getNivelMejora() {
+        return nivelMejora;
     }
 }

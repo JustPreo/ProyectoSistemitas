@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="35" height="13" tilewidth="32" tileheight="32" infinite="0" nextlayerid="20" nextobjectid="56">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="35" height="13" tilewidth="32" tileheight="32" infinite="0" nextlayerid="20" nextobjectid="62">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="BG" width="35" height="13">
   <data encoding="csv">
@@ -95,7 +95,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,19,19,19,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -120,19 +120,18 @@
 68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68,68
 </data>
  </layer>
- <objectgroup id="15" name="ElectricidadColl">
-  <object id="55" x="352" y="224" width="96" height="32"/>
- </objectgroup>
+ <objectgroup id="15" name="ElectricidadColl"/>
  <objectgroup id="16" name="RopesColl"/>
  <objectgroup id="17" name="Coll">
   <object id="23" x="0" y="352" width="1120" height="64"/>
   <object id="24" x="0" y="-352" width="32" height="704"/>
   <object id="25" x="1088" y="-352" width="32" height="704"/>
   <object id="49" x="960" y="224" width="128" height="64"/>
-  <object id="50" x="608" y="128" width="96" height="32"/>
-  <object id="51" x="480" y="192" width="96" height="32"/>
-  <object id="52" x="352" y="256" width="96" height="32"/>
   <object id="53" x="256" y="320" width="64" height="32"/>
+  <object id="57" x="0" y="-32" width="1120" height="32"/>
+  <object id="58" x="352.063" y="256" width="95.75" height="16.875"/>
+  <object id="60" x="480.071" y="192.095" width="96.0543" height="17.0924"/>
+  <object id="61" x="608.042" y="128.021" width="95.9722" height="16.875"/>
  </objectgroup>
  <objectgroup id="18" name="DoorsColl">
   <object id="47" x="960" y="288" width="32" height="64">
