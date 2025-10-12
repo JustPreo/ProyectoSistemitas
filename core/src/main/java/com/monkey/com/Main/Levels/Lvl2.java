@@ -1,5 +1,6 @@
 package com.monkey.com.Main.Levels;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.monkey.com.Main.Main;
+import com.monkey.com.Main.Menus.GameProgress;
 import com.monkey.com.Main.Menus.MenuScreen;
 import com.monkey.com.Main.Objetos.Mono;
 import com.monkey.com.Main.Objetos.Prisionero;
@@ -53,7 +55,7 @@ public class Lvl2 implements Screen {
     private ArrayList<RectangleMapObject> revisarwin;
     private com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer renderer;
 
-    // Menú
+    // Menu
     private GameOverMenu gameOverMenu;
     private boolean juegoEnPausa = false;
 
@@ -73,14 +75,14 @@ public class Lvl2 implements Screen {
 
         batch = new SpriteBatch();
         prisionero = new Prisionero("Humano/Humano.png", 500, 64, 200, colisiones);
-        mono = new Mono("Humano/Humano.png", 500, 64, 200, colisiones);
-
+        mono = new Mono("Mono1.png", 500, 64, 200, colisiones);
+        mono.mejoraMono1();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, CamWidth, CamHeight);
 
         shapes = new ShapeRenderer();
 
-        // Inicializar menú desde Level
+        // Inicializar menu desde Level
         gameOverMenu = level.getGameOverMenu();
 
         // Input
@@ -88,23 +90,26 @@ public class Lvl2 implements Screen {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (gameOverMenu.estaMostrado()) {
-                    return true; // Input es manejado por Stage del menú
+                    return true; 
                 }
                 return false;
             }
         });
+        
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.reproducirNarracion("lvl2_intro.mp3", false);
     }
 
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
 
-        // Si el juego está en pausa por menú
+        
         if (juegoEnPausa) {
             renderJuego();
             gameOverMenu.render(delta);
 
-            // Checar acción del menú
+            
             GameOverMenu.MenuAction accion = gameOverMenu.getAccion();
             if (accion != GameOverMenu.MenuAction.NINGUNA) {
                 manejarAccionMenu(accion);
@@ -113,23 +118,23 @@ public class Lvl2 implements Screen {
             return;
         }
 
-        // Mini-juegos
+       
         if (enMiniGame) {
             if (cableMiniGame != null) cableMiniGame.render(delta);
             else if (minijuegoNumeros != null) minijuegoNumeros.render(delta);
             return;
         }
 
-        // Timers
+       
         if (timer <= 1.5f) timer += delta;
         if (timerWin <= 0.5f) timerWin += delta;
 
-        // Cambiar personaje
+       
         if (Gdx.input.isKeyJustPressed(Input.Keys.TAB)) switchController();
 
         prisionero.update(delta);
 
-        // Cámara
+       
         float targetX = activo ? mono.getX() : prisionero.getX();
         float targetY = activo ? mono.getY() : prisionero.getY();
         camera.position.x = targetX + CamMargX;
@@ -156,7 +161,7 @@ public class Lvl2 implements Screen {
 
         renderer.setView(camera);
 
-        // Renderizar capas principales
+        
         int bgIndex = map.getLayers().getIndex("BG");
         int pisoIndex = map.getLayers().getIndex("Piso");
         int decorIndex = map.getLayers().getIndex("Decor");
@@ -166,7 +171,7 @@ public class Lvl2 implements Screen {
 
         renderer.render(new int[]{bgIndex, pisoIndex, doorsIndex, ropesIndex, electricidadIndex, decorIndex});
 
-        // Renderizar jugadores
+        
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         prisionero.render(batch);
@@ -272,7 +277,7 @@ public class Lvl2 implements Screen {
                 minijuegoNumeros.dispose();
                 minijuegoNumeros = null;
                 Gdx.input.setInputProcessor(null);
-                System.out.println("Mini-juego num completado.");
+                
 
                 RectangleMapObject electricidadABorrar = null;
                 if (electricidadCollLayer != null) {
@@ -307,7 +312,7 @@ public class Lvl2 implements Screen {
                                 electricidadLayer.setCell(x, y, null);
                             }
                         }
-                        System.out.println("Electricidad eliminada: " + target);
+                        
                     }
                 }
             });
@@ -352,6 +357,9 @@ public class Lvl2 implements Screen {
     private void mostrarMenuFallo() {
         juegoEnPausa = true;
         gameOverMenu.mostrar(GameOverMenu.MenuType.NIVEL_FALLIDO);
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.detenerNarracion();
+        
     }
 
     private void revisarWin() {
@@ -359,8 +367,9 @@ public class Lvl2 implements Screen {
             Rectangle r = revisarObj.getRectangle();
             if (prisionero.getHitbox().overlaps(r) && mono.getHitbox().overlaps(r) && !level.getWin()) {
                 level.setWin(true);
+                GameProgress.guardarNivel(3);
                 mostrarMenuCompletado();
-                System.out.println("Nivel completado!");
+                
             }
         }
     }
@@ -368,6 +377,8 @@ public class Lvl2 implements Screen {
     private void mostrarMenuCompletado() {
         juegoEnPausa = true;
         gameOverMenu.mostrar(GameOverMenu.MenuType.NIVEL_COMPLETADO);
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.detenerNarracion();
     }
 
     private void manejarAccionMenu(GameOverMenu.MenuAction accion) {
@@ -386,8 +397,8 @@ public class Lvl2 implements Screen {
 
             case SIGUIENTE_NIVEL:
                 dispose();
-                System.out.println("Siguiente nivel");
-                //mainGame.setScreen(new Lvl3());
+                
+                ((Game) Gdx.app.getApplicationListener()).setScreen(new LoadingScreen((Game) Gdx.app.getApplicationListener(), new Lvl3()));
                 break;
 
             case NINGUNA:

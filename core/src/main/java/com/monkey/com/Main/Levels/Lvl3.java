@@ -20,6 +20,7 @@ import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.NINGUNA;
 import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.REINTENTAR;
 import static com.monkey.com.Main.Levels.GameOverMenu.MenuAction.SIGUIENTE_NIVEL;
 import com.monkey.com.Main.Main;
+import com.monkey.com.Main.Menus.GameProgress;
 import com.monkey.com.Main.Menus.MenuScreen;
 import com.monkey.com.Main.Objetos.Mono;
 import com.monkey.com.Main.Objetos.Prisionero;
@@ -58,13 +59,13 @@ public class Lvl3 implements Screen {
     private ArrayList<RectangleMapObject> revisarwin;
     private com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer renderer;
 
-    // Menú
+    
     private GameOverMenu gameOverMenu;
     private boolean juegoEnPausa = false;
 
     @Override
     public void show() {
-        // Inicializar nivel
+        
         level = new Level("Mapa/Mapa1/Lvl3.tmx");
         renderer = level.getRenderer();
         map = level.getMap();
@@ -86,31 +87,34 @@ public class Lvl3 implements Screen {
 
         shapes = new ShapeRenderer();
 
-        // Inicializar menú desde Level
+        
         gameOverMenu = level.getGameOverMenu();
 
-        // Input
+       
         Gdx.input.setInputProcessor(new InputAdapter() {
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 if (gameOverMenu.estaMostrado()) {
-                    return true; // Input es manejado por Stage del menú
+                    return true; 
                 }
                 return false;
             }
         });
+        
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.reproducirNarracion("lvl3_intro.mp3", false);
     }
 
     @Override
     public void render(float delta) {
         delta = Math.min(delta, 0.05f);
 
-        // Si el juego está en pausa por menú
+        
         if (juegoEnPausa) {
             renderJuego();
             gameOverMenu.render(delta);
 
-            // Checar acción del menú
+            
             GameOverMenu.MenuAction accion = gameOverMenu.getAccion();
             if (accion != GameOverMenu.MenuAction.NINGUNA) {
                 manejarAccionMenu(accion);
@@ -119,7 +123,7 @@ public class Lvl3 implements Screen {
             return;
         }
 
-        // Mini-juegos
+        
         if (enMiniGame) {
             if (cableMiniGame != null) {
                 cableMiniGame.render(delta);
@@ -144,7 +148,7 @@ public class Lvl3 implements Screen {
 
         prisionero.update(delta);
 
-        // Cámara
+       
         float targetX = activo ? mono.getX() : prisionero.getX();
         float targetY = activo ? mono.getY() : prisionero.getY();
         camera.position.x = targetX + CamMargX;
@@ -171,7 +175,7 @@ public class Lvl3 implements Screen {
 
         renderer.setView(camera);
 
-        // Renderizar capas principales
+        
         int bgIndex = map.getLayers().getIndex("BG");
         int pisoIndex = map.getLayers().getIndex("Piso");
         int decorIndex = map.getLayers().getIndex("Decor");
@@ -181,7 +185,7 @@ public class Lvl3 implements Screen {
 
         renderer.render(new int[]{bgIndex, pisoIndex, doorsIndex, ropesIndex, electricidadIndex, decorIndex});
 
-        // Renderizar jugadores
+        
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         prisionero.render(batch);
@@ -235,7 +239,7 @@ public class Lvl3 implements Screen {
                 }
             }
 
-            System.out.println("Minijuego de cables completado y target eliminado: " + target);
+            
         });
 
         Gdx.input.setInputProcessor(cableMiniGame.new CableInput());
@@ -275,9 +279,9 @@ public class Lvl3 implements Screen {
             if ("palanca".equals(type)) {
                 String target = palancaObj.getProperties().get("target", String.class);
 
-                // Abrimos el minijuego de cables pasando la palanca y su target
+                
                 miniJuegoCable(palancaObj, target, collLayer, doorLayer, tileWidth, tileHeight);
-                break; // evita activar varias palancas a la vez
+                break; 
             }
         }
     }
@@ -296,11 +300,12 @@ public class Lvl3 implements Screen {
         for (RectangleMapObject palancaObj : palancas) {
             Rectangle palancaRect = palancaObj.getRectangle();
 
-            if (prisionero.getHitbox().overlaps(palancaRect) && Gdx.input.isKeyJustPressed(Input.Keys.E) && !activo) {
+            if (mono.getHitbox().overlaps(palancaRect) && Gdx.input.isKeyJustPressed(Input.Keys.E) && activo) {
                 String type = palancaObj.getProperties().get("type", String.class);
                 String target = palancaObj.getProperties().get("target", String.class);
-
+               
                 if ("numeros".equals(type) && target != null) {
+                    
                     miniJuegoNumeros(target, electricidadCollLayer, electricidadLayer, tileWidth, tileHeight);
                 }
             }
@@ -308,54 +313,58 @@ public class Lvl3 implements Screen {
     }
 
     private void miniJuegoNumeros(String target, MapLayer electricidadCollLayer, TiledMapTileLayer electricidadLayer, int tileWidth, int tileHeight) {
-        if (!enMiniGame) {
-            enMiniGame = true;
-            minijuegoNumeros = new MinijuegoNumeros(() -> {
-                enMiniGame = false;
-                minijuegoNumeros.dispose();
-                minijuegoNumeros = null;
-                Gdx.input.setInputProcessor(null);
-                System.out.println("Mini-juego num completado.");
+    if (!enMiniGame) {
+        enMiniGame = true;
+        minijuegoNumeros = new MinijuegoNumeros(() -> {
+            enMiniGame = false;
+            minijuegoNumeros.dispose();
+            minijuegoNumeros = null;
+            Gdx.input.setInputProcessor(null);
+            
 
-                RectangleMapObject electricidadABorrar = null;
+            RectangleMapObject electricidadABorrar = null;
+
+            if (electricidadCollLayer != null) {
+                for (MapObject obj : electricidadCollLayer.getObjects()) {
+                    if (obj instanceof RectangleMapObject) {
+                       
+                        Object idObj = obj.getProperties().get("id");
+                        String id = idObj != null ? idObj.toString() : null;
+
+                        if (id != null && id.equals(target)) {
+                            electricidadABorrar = (RectangleMapObject) obj;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (electricidadABorrar != null) {
+                Rectangle r = electricidadABorrar.getRectangle();
+                colisiones.remove(r);
+                electricidad.remove(electricidadABorrar);
+
                 if (electricidadCollLayer != null) {
-                    for (MapObject obj : electricidadCollLayer.getObjects()) {
-                        if (obj instanceof RectangleMapObject) {
-                            String id = obj.getProperties().get("id", String.class);
-                            if (id != null && id.equals(target)) {
-                                electricidadABorrar = (RectangleMapObject) obj;
-                                break;
-                            }
-                        }
-                    }
+                    electricidadCollLayer.getObjects().remove(electricidadABorrar);
                 }
 
-                if (electricidadABorrar != null) {
-                    Rectangle r = electricidadABorrar.getRectangle();
-                    colisiones.remove(r);
-                    electricidad.remove(electricidadABorrar);
+                if (electricidadLayer != null) {
+                    int startX = (int) Math.floor(r.x / tileWidth);
+                    int startY = (int) Math.floor(r.y / tileHeight);
+                    int endX = (int) Math.ceil((r.x + r.width) / tileWidth);
+                    int endY = (int) Math.ceil((r.y + r.height) / tileHeight);
 
-                    if (electricidadCollLayer != null) {
-                        electricidadCollLayer.getObjects().remove(electricidadABorrar);
-                    }
-
-                    if (electricidadLayer != null) {
-                        int startX = (int) Math.floor(r.x / tileWidth);
-                        int startY = (int) Math.floor(r.y / tileHeight);
-                        int endX = (int) Math.ceil((r.x + r.width) / tileWidth);
-                        int endY = (int) Math.ceil((r.y + r.height) / tileHeight);
-
-                        for (int x = startX; x < endX; x++) {
-                            for (int y = startY; y < endY; y++) {
-                                electricidadLayer.setCell(x, y, null);
-                            }
+                    for (int x = startX; x < endX; x++) {
+                        for (int y = startY; y < endY; y++) {
+                            electricidadLayer.setCell(x, y, null);
                         }
-                        System.out.println("Electricidad eliminada: " + target);
                     }
+                    
                 }
-            });
-        }
+            }
+        });
     }
+}
 
     private void handleRopes(float delta) {
         mono.setEnEscalera(false);
@@ -400,6 +409,8 @@ public class Lvl3 implements Screen {
     private void mostrarMenuFallo() {
         juegoEnPausa = true;
         gameOverMenu.mostrar(GameOverMenu.MenuType.NIVEL_FALLIDO);
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.detenerNarracion();
     }
 
     private void revisarWin() {
@@ -407,8 +418,9 @@ public class Lvl3 implements Screen {
             Rectangle r = revisarObj.getRectangle();
             if (prisionero.getHitbox().overlaps(r) && mono.getHitbox().overlaps(r) && !level.getWin()) {
                 level.setWin(true);
+                GameProgress.guardarNivel(4);
                 mostrarMenuCompletado();
-                System.out.println("Nivel completado!");
+                
             }
         }
     }
@@ -416,6 +428,8 @@ public class Lvl3 implements Screen {
     private void mostrarMenuCompletado() {
         juegoEnPausa = true;
         gameOverMenu.mostrar(GameOverMenu.MenuType.NIVEL_COMPLETADO);
+        VoiceManager voice = VoiceManager.getInstance();
+        voice.detenerNarracion();
     }
 
     private void manejarAccionMenu(GameOverMenu.MenuAction accion) {
@@ -434,8 +448,8 @@ public class Lvl3 implements Screen {
 
             case SIGUIENTE_NIVEL:
                 dispose();
-                System.out.println("Siguiente nivel");
-                //mainGame.setScreen(new Lvl4());
+                
+                mainGame.setScreen(new Lvl4());
                 break;
 
             case NINGUNA:

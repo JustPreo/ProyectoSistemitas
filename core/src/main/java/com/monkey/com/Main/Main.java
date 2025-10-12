@@ -11,6 +11,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.monkey.com.Main.Levels.Lvl1;
 import com.monkey.com.Main.Levels.Lvl2;
 import com.monkey.com.Main.Levels.Lvl3;
+import com.monkey.com.Main.Levels.Lvl4;
+import com.monkey.com.Main.Levels.Lvl5;
+import com.monkey.com.Main.Levels.MusicManager;
 import com.monkey.com.Main.Menus.MenuScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -18,8 +21,10 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        //setScreen(new MenuScreen());
+        setScreen(new MenuScreen());
         //setScreen(new TestMapa());
-        setScreen(new Lvl3());
+        //setScreen(new Lvl1());
+        MusicManager.getInstance().reproducirMusica("bgm.mp3", true);
+        
     }
 }

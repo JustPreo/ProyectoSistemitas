@@ -27,7 +27,7 @@ public class Mono extends PlayerController {
 
     public Mono(String texturaPath, float xI, float yI, float velocidad, ArrayList<Rectangle> mapaPlataformas) {
         super(texturaPath, xI, yI, velocidad, mapaPlataformas);
-        this.hitbox = new Rectangle(x, y, 30, 30); // Tamaño sprite    
+        this.hitbox = new Rectangle(x, y, 26, 30); // Tamaño sprite    
     }
 
     @Override
@@ -139,9 +139,9 @@ public class Mono extends PlayerController {
 
     public void mejoraMono1() {
         
-            bonusVelocidad += 60;
+            bonusVelocidad += 15;
             bonusSalto += 15;
-           // sprite = new Texture("mono1.png");
+            sprite = new Texture("Mono2.png");
             nivelMejora = 1;
             System.out.println("Mono mejorado a nivel 1: more rapido y salta mas alto!");
         
@@ -149,9 +149,9 @@ public class Mono extends PlayerController {
 
     public void mejoraMono2() {
         
-            bonusVelocidad += 80;
+            bonusVelocidad += 30;
             bonusSalto += 30;
-           // sprite = new Texture("mono2.png");
+           sprite = new Texture("Mono3.png");
             nivelMejora = 2;
             System.out.println("Mono mejorado a nivel 2: ahora aun mas agil y fuerte");
         
@@ -159,9 +159,9 @@ public class Mono extends PlayerController {
 
     public void mejoraMono3() {
         
-            bonusVelocidad += 120;
+            bonusVelocidad += 45;
             bonusSalto += 45;
-            //sprite = new Texture("mono3.png");
+            sprite = new Texture("Mono4.png");
             nivelMejora = 3;
             System.out.println("Mono alcanzo su forma definitiva!");
         

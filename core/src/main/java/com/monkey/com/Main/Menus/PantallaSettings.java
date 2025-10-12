@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.monkey.com.Main.Main;
+import com.monkey.com.Main.Levels.MusicManager; 
 
 public class PantallaSettings implements Screen {
 
@@ -27,8 +28,6 @@ public class PantallaSettings implements Screen {
     private Texture texturaBoton, texturaBoton2;
     private Button.ButtonStyle estiloBoton;
     private Preferences prefs;
-
-    private Music musica; //Despues
 
     public PantallaSettings() {}
 
@@ -43,10 +42,8 @@ public class PantallaSettings implements Screen {
         
         texturaBoton = new Texture(Gdx.files.internal("Fondo/FondoNormal.png"));
         texturaBoton2 = new Texture(Gdx.files.internal("Fondo/FondoNormal2.png"));
-
         Drawable drawableUp = new TextureRegionDrawable(new TextureRegion(texturaBoton));
         Drawable drawableDown = new TextureRegionDrawable(new TextureRegion(texturaBoton2));
-
         estiloBoton = new Button.ButtonStyle();
         estiloBoton.up = drawableUp;
         estiloBoton.down = drawableDown;
@@ -59,7 +56,7 @@ public class PantallaSettings implements Screen {
         tabla.setFillParent(true);
         tabla.center();
 
-        
+        // Fuente
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P-vaV7.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 14;
@@ -72,21 +69,18 @@ public class PantallaSettings implements Screen {
         Label titulo = new Label("Configuracion", estiloTexto);
         tabla.add(titulo).padBottom(40).row();
 
-        
+       
         Label lblVolumen = new Label("Volumen Musica", estiloTexto);
         final Slider sliderVolumen = new Slider(0f, 1f, 0.01f, false, skin);
         sliderVolumen.setValue(prefs.getFloat("volumen", 0.5f));
-        tabla.add(lblVolumen).padBottom(10);
-        tabla.row();
-        tabla.add(sliderVolumen).width(200).padBottom(30);
-        tabla.row();
+        tabla.add(lblVolumen).padBottom(10).row();
+        tabla.add(sliderVolumen).width(200).padBottom(30).row();
 
        
         final CheckBox checkFull = new CheckBox(" Pantalla Completa", skin);
         checkFull.setChecked(prefs.getBoolean("fullscreen", false));
         tabla.add(checkFull).padBottom(30).row();
 
-        
         final CheckBox checkFPS = new CheckBox(" Mostrar FPS", skin);
         checkFPS.setChecked(prefs.getBoolean("mostrar_fps", true));
         tabla.add(checkFPS).padBottom(30).row();
@@ -103,12 +97,15 @@ public class PantallaSettings implements Screen {
                 prefs.putBoolean("mostrar_fps", checkFPS.isChecked());
                 prefs.flush();
 
-                
+               
                 if (checkFull.isChecked()) {
                     Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
                 } else {
                     Gdx.graphics.setWindowedMode(1280, 720);
                 }
+
+                
+                MusicManager.getInstance().setVolumen(sliderVolumen.getValue());
 
                 mostrarMensaje("Configuracion guardada");
             }
@@ -127,6 +124,10 @@ public class PantallaSettings implements Screen {
                 sliderVolumen.setValue(0.5f);
                 checkFull.setChecked(false);
                 checkFPS.setChecked(true);
+
+                
+                MusicManager.getInstance().setVolumen(0.5f);
+
                 mostrarMensaje("Configuracion restablecida");
             }
         });
@@ -182,11 +183,13 @@ public class PantallaSettings implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}
-    @Override public void dispose() {
+    @Override
+    public void dispose() {
         stage.dispose();
         skin.dispose();
         bg.dispose();
         texturaBoton.dispose();
         texturaBoton2.dispose();
+       
     }
 }

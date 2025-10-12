@@ -30,7 +30,7 @@ public class GameOverMenu {
 
     public GameOverMenu() {
         stage = new Stage(new ScreenViewport());
-        skin = new Skin(Gdx.files.internal("uiskin.json")); // Usa el skin standard de LibGDX
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
         table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
@@ -59,7 +59,7 @@ public class GameOverMenu {
             }
         });
 
-        // No agregar botones todavía; se hara en mostrar()
+        
     }
 
     public void mostrar(MenuType tipo) {

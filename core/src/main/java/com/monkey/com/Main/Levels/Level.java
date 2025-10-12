@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 
 public class Level {
+
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
@@ -24,9 +25,13 @@ public class Level {
     private ArrayList<RectangleMapObject> ropes = new ArrayList<>();
     private ArrayList<RectangleMapObject> electricidad = new ArrayList<>();
     private ArrayList<RectangleMapObject> WINCHECK = new ArrayList<>();
+    private ArrayList<RectangleMapObject> plataformas = new ArrayList<>();
+    private ArrayList<RectangleMapObject> pressurePlates = new ArrayList<>();
+
     private boolean win = false;
-      protected GameOverMenu gameOverMenu;
-      public Level(String tmxPath) {
+    protected GameOverMenu gameOverMenu;
+
+    public Level(String tmxPath) {
         // Carga mapa
         map = new TmxMapLoader().load(tmxPath);
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -65,7 +70,7 @@ public class Level {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rec = ((RectangleMapObject) object).getRectangle();
                     ropes.add((RectangleMapObject) object);
-                    System.out.println("Aa");
+                    
                 }
             }
         }
@@ -98,39 +103,93 @@ public class Level {
                     if (object instanceof RectangleMapObject) {
                         Rectangle r = ((RectangleMapObject) object).getRectangle();
                         colisiones.add(r);
-                        System.out.println("Pueta cargada");
+                        
                     }
                 }
             }
         }
-    }
 
-    
+        // PlataformasColl
+        MapLayer plataformaLayer = map.getLayers().get("PlataformasColl");
+        if (plataformaLayer != null) {
+            for (MapObject object : plataformaLayer.getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    plataformas.add((RectangleMapObject) object);
+                }
+            }
+        }
+
+// PressurePlates
+        MapLayer pressurePlateLayer = map.getLayers().get("PressurePlates");
+        if (pressurePlateLayer != null) {
+            for (MapObject object : pressurePlateLayer.getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    pressurePlates.add((RectangleMapObject) object);
+                }
+            }
+        }
+
+    }
 
     // Getters
-    public ArrayList<Rectangle> getColisiones() { return colisiones; }
-    public ArrayList<RectangleMapObject> getPalancas() { return palancas; }
-    public ArrayList<RectangleMapObject> getRopes() { return ropes; }
-    public ArrayList<RectangleMapObject> getElectricidad() { return electricidad; }
-    public ArrayList<RectangleMapObject> getWINCHECK() {return WINCHECK;}
-    public ArrayList<MapObject> getParedes() { return paredes; }
-    public OrthogonalTiledMapRenderer getRenderer() { return renderer; }
-    
-    public TiledMap getMap() { return map; }
+    public ArrayList<Rectangle> getColisiones() {
+        return colisiones;
+    }
+
+    public ArrayList<RectangleMapObject> getPalancas() {
+        return palancas;
+    }
+
+    public ArrayList<RectangleMapObject> getRopes() {
+        return ropes;
+    }
+
+    public ArrayList<RectangleMapObject> getElectricidad() {
+        return electricidad;
+    }
+
+    public ArrayList<RectangleMapObject> getWINCHECK() {
+        return WINCHECK;
+    }
+
+    public ArrayList<MapObject> getParedes() {
+        return paredes;
+    }
+
+    public OrthogonalTiledMapRenderer getRenderer() {
+        return renderer;
+    }
+
+    public TiledMap getMap() {
+        return map;
+    }
 
     public void dispose() {
-        if (renderer != null) renderer.dispose();
-        if (map != null) map.dispose();
+        if (renderer != null) {
+            renderer.dispose();
+        }
+        if (map != null) {
+            map.dispose();
+        }
     }
-    public boolean getWin()
-    {
-    return win;
+
+    public boolean getWin() {
+        return win;
     }
-    public void setWin(boolean winCheck)
-    {
-    win = winCheck;
+
+    public void setWin(boolean winCheck) {
+        win = winCheck;
     }
+
     public GameOverMenu getGameOverMenu() {
         return gameOverMenu;
+    }
+
+    public ArrayList<RectangleMapObject> getPlataformas() {
+        return plataformas;
+    }
+
+    public ArrayList<RectangleMapObject> getPressurePlates() {
+        return pressurePlates;
     }
 }

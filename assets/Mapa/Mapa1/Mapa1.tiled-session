@@ -3,80 +3,101 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "Lvl1.tmx",
+    "activeFile": "Lvl3.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
         "Lvl1.tmx": {
             "expandedObjectLayers": [
-                15,
-                18,
-                14,
-                16,
                 19,
-                17
+                16,
+                15,
+                14,
+                17,
+                18
             ],
             "scale": 0.75,
-            "selectedLayer": 8,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 502.66666666666674,
-                "y": 288.66666666666663
+                "x": 559.9999999999999,
+                "y": 207.99999999999994
             }
         },
         "Lvl2.tmx": {
             "expandedObjectLayers": [
-                9,
-                11,
-                12,
-                10,
                 8,
-                13
+                9,
+                12,
+                11,
+                13,
+                10
             ],
             "scale": 0.75,
-            "selectedLayer": 7,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 516,
-                "y": 481.99999999999994
+                "x": 668.6666666666665,
+                "y": 411.99999999999994
             }
         },
         "Lvl3.tmx": {
             "expandedObjectLayers": [
-                9,
-                11,
-                14,
-                12,
                 8,
-                13
+                9,
+                12,
+                11,
+                13,
+                14
             ],
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 535,
-                "y": 54
+                "x": 644.75,
+                "y": 185
+            }
+        },
+        "Lvl4.tmx": {
+            "expandedObjectLayers": [
+                8,
+                9,
+                12,
+                16,
+                10,
+                14
+            ],
+            "scale": 0.75,
+            "selectedLayer": 13,
+            "viewCenter": {
+                "x": 540.6666666666665,
+                "y": 545.3333333333333
             }
         },
         "Lvl5.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 4,
+            "expandedObjectLayers": [
+                9,
+                10,
+                14
+            ],
+            "scale": 3,
+            "selectedLayer": 8,
             "viewCenter": {
-                "x": 560,
-                "y": 210
+                "x": 960,
+                "y": 159.99999999999997
             }
         },
         "Mapa1.tmx": {
             "expandedObjectLayers": [
                 9,
                 11,
-                4,
+                6,
                 3,
-                6
+                4
             ],
             "scale": 0.75,
             "selectedLayer": 7,
             "viewCenter": {
-                "x": 710.6666666666666,
-                "y": 757.3333333333333
+                "x": 762.6666666666667,
+                "y": 382.66666666666674
             }
         },
         "TemplateMapas.tmx": {
@@ -88,7 +109,7 @@
             }
         },
         "Tileset.tsx": {
-            "scaleInDock": 0.75,
+            "scaleInDock": 0.5,
             "scaleInEditor": 1
         }
     },
@@ -100,15 +121,21 @@
     "openFiles": [
         "Mapa1.tmx",
         "Tileset.tsx",
-        "Lvl1.tmx"
+        "Lvl1.tmx",
+        "Lvl2.tmx",
+        "Lvl3.tmx",
+        "Lvl4.tmx",
+        "Lvl5.tmx"
     ],
     "project": "Mapa1.tiled-project",
     "recentFiles": [
-        "Lvl3.tmx",
         "Mapa1.tmx",
         "Tileset.tsx",
         "Lvl1.tmx",
-        "Lvl5.tmx"
+        "Lvl2.tmx",
+        "Lvl5.tmx",
+        "Lvl4.tmx",
+        "Lvl3.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"
 }
